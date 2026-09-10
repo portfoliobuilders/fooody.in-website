@@ -1,0 +1,21 @@
+FOOODY.IN — files for your PC
+================================
+
+This folder IS the website. You can:
+
+A) View it on your computer
+   Windows: double-click  start-on-windows.bat
+   Mac:     double-click  start-on-mac-or-linux.command
+   Then a browser window opens at http://localhost:8080
+
+   Keep the black/terminal window open while you browse.
+   Close that window when you are done.
+
+B) Put it on Hostinger
+   Upload EVERYTHING inside this folder into Hostinger's public_html
+   (including .htaccess, index.html, images, and the _next folder).
+
+Do not only double-click index.html — the design will look broken.
+Use start-on-windows.bat (or the Mac file) instead.
+
+Fooody.in  ·  Proudly born in Kerala

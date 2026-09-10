@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+
+Host: https://fooody.in
+Sitemap: https://fooody.in/sitemap.xml
