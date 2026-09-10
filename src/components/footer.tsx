@@ -2,7 +2,30 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import { HashLink } from "@/components/hash-link";
 import { Logo } from "@/components/logo";
+import { PoweredBy } from "@/components/powered-by";
 import { KERALA_CITIES, SITE } from "@/lib/site";
+
+const PRODUCT_LINKS = [
+  { href: "/", label: "Order food" },
+  { href: "/our-story/", label: "Our Story" },
+  { href: "/for-restaurants/", label: "For Restaurants" },
+  { href: "/for-restaurants/#features", label: "Platform" },
+  { href: "/for-restaurants/#pricing", label: "Pricing" },
+  { href: "/for-restaurants/#waitlist", label: "Partner Support" },
+] as const;
+
+const COMPANY_LINKS = [
+  { href: "/about/", label: "About" },
+  { href: "/contact/", label: "Contact" },
+] as const;
+
+const LEGAL_LINKS = [
+  { href: "/terms/", label: "Terms of Use" },
+  { href: "/privacy/", label: "Privacy Policy" },
+  { href: "/cookies/", label: "Cookie Policy" },
+  { href: "/disclaimer/", label: "Disclaimer" },
+  { href: "/refunds/", label: "Refunds" },
+] as const;
 
 export function Footer() {
   const loop = [...KERALA_CITIES, ...KERALA_CITIES];
@@ -28,59 +51,85 @@ export function Footer() {
             platform for restaurants that want their customers back.
           </p>
         </div>
-        <nav className="grid grid-cols-2 gap-8 text-sm" aria-label="Footer">
-          <div className="flex flex-col gap-2">
-            <Link href="/" className="text-ivory/80 hover:text-ivory">
-              Order food
-            </Link>
-            <Link href="/our-story/" className="text-ivory/80 hover:text-ivory">
-              Our Story
-            </Link>
-            <Link href="/for-restaurants/" className="text-ivory/80 hover:text-ivory">
-              For Restaurants
-            </Link>
-            <HashLink href="/for-restaurants/#waitlist" className="text-ivory/80 hover:text-ivory">
-              Partner Support
-            </HashLink>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Link href="/terms/" className="text-ivory/80 hover:text-ivory">
-              Terms
-            </Link>
-            <Link href="/privacy/" className="text-ivory/80 hover:text-ivory">
-              Privacy Policy
-            </Link>
+        <nav
+          className="grid grid-cols-2 gap-8 text-sm sm:grid-cols-3"
+          aria-label="Footer"
+        >
+          <FooterCol title="Product" links={PRODUCT_LINKS} hash />
+          <FooterCol title="Company" links={COMPANY_LINKS} />
+          <FooterCol title="Legal" links={LEGAL_LINKS} />
+        </nav>
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex gap-3">
             <a
-              href={`mailto:${SITE.email}`}
-              className="inline-flex items-center gap-2 text-ivory/80 hover:text-ivory"
+              href="https://www.instagram.com/"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ivory/80 hover:text-ivory"
+              aria-label="Fooody on Instagram"
             >
-              <Mail size={14} /> Contact
+              <InstagramGlyph />
+            </a>
+            <a
+              href="https://www.linkedin.com/"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ivory/80 hover:text-ivory"
+              aria-label="Fooody on LinkedIn"
+            >
+              <LinkedInGlyph />
             </a>
           </div>
-        </nav>
-        <div className="flex gap-3">
           <a
-            href="https://www.instagram.com/"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ivory/80 hover:text-ivory"
-            aria-label="Fooody on Instagram"
+            href={`mailto:${SITE.email}`}
+            className="inline-flex items-center gap-2 text-sm text-ivory/80 hover:text-ivory"
           >
-            <InstagramGlyph />
-          </a>
-          <a
-            href="https://www.linkedin.com/"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ivory/80 hover:text-ivory"
-            aria-label="Fooody on LinkedIn"
-          >
-            <LinkedInGlyph />
+            <Mail size={14} /> {SITE.email}
           </a>
         </div>
       </div>
 
       <div className="kasavu-line mx-auto mt-10 max-w-7xl" />
-      <p className="mx-auto mt-6 max-w-7xl text-center text-sm text-mist">
-        Pioneered in Kerala (2016) • Empowering Restaurant Direct Orders (2026)
-      </p>
+      <div className="mx-auto mt-6 flex max-w-7xl flex-col items-center gap-5">
+        <p className="text-center text-sm text-mist">
+          Pioneered in Kerala (2016) • Empowering Restaurant Direct Orders (2026)
+        </p>
+        <PoweredBy />
+      </div>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  links,
+  hash = false,
+}: {
+  title: string;
+  links: readonly { href: string; label: string }[];
+  hash?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="mb-1 text-xs tracking-[0.18em] text-gold uppercase">
+        {title}
+      </p>
+      {links.map((link) =>
+        hash ? (
+          <HashLink
+            key={link.href}
+            href={link.href}
+            className="text-ivory/80 hover:text-ivory"
+          >
+            {link.label}
+          </HashLink>
+        ) : (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="text-ivory/80 hover:text-ivory"
+          >
+            {link.label}
+          </Link>
+        ),
+      )}
+    </div>
   );
 }
 

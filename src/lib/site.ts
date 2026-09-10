@@ -53,3 +53,8 @@ export const KERALA_CITIES = [
 ] as const;
 
 export const WAITLIST_STORAGE_KEY = "fooody_waitlist_v1";
+
+export const PORTFOLIX = {
+  name: "Portfolix.Tech",
+  url: "https://portfolix.tech/",
+} as const;
