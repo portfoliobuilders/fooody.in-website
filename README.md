@@ -1,8 +1,17 @@
 # Fooody.in — official website
 
-Luxury marketing site for **Fooody.in**, Kerala’s original food-tech pioneer (2016), returning in 2026 as a **0% commission direct ordering platform** for restaurants across India.
+Consumer food-ordering homepage plus restaurant **claim-your-URL** engine for **Fooody.in** — Kerala’s original food-tech pioneer (2016), returning in 2026 with **₹0 platform fee** for guests and **0% commission** direct stores for kitchens.
 
 This project uses **Next.js** so search engines get real HTML (titles, headings, sitemap, structured data). The production build is a folder of static files you can upload to **Hostinger `public_html`** — no Node server required on the host.
+
+## Pages
+
+- `/` — Kochi ordering UI: location, search, categories, dish grid, cart, and “claim fooody.in/your-brand”
+- `/our-story/` — 2016 founder chronicle, office / bot / merch gallery
+- `/for-restaurants/` — QR dining, CRM, POS, fleets, savings calculator, waitlist
+- `/terms/` and `/privacy/`
+
+`/our-story.html` and `/for-restaurants.html` redirect to the slash URLs on Apache hosts.
 
 ## Local preview
 
@@ -30,7 +39,7 @@ To rebuild that zip after edits: `npm run package:pc`.
 2. Upload the **contents** of **`public_html/`** (or `out/`) into Hostinger **`public_html`**, including `.htaccess`.
 3. Point the domain to that folder.
 
-Optional: set `NEXT_PUBLIC_WAITLIST_WEBHOOK` in a `.env.local` file before building if you want waitlist submissions posted to Formspree, Make.com, Zapier, or Google Apps Script. Without it, the form still works and stores a confirmation in the browser.
+Optional: set `NEXT_PUBLIC_WAITLIST_WEBHOOK` in a `.env.local` file before building if you want waitlist / claim-link submissions posted to Formspree, Make.com, Zapier, or Google Apps Script. Without it, the form still works and stores a confirmation in the browser.
 
 ## Checks
 
@@ -42,5 +51,6 @@ npm run build
 
 ## Brand notes
 
-- Dark obsidian `#090D16`, charcoal cards `#111827`, flame red → orange `#EF4444` → `#F97316`
+- Marketplace canvas `#F8FAFC`, obsidian header `#0B0F17`, crimson `#E11D48` / `#EF4444`, emerald ratings
 - Story photographs live in `public/images/` (`office-progress.jpg`, `early-app-bot.jpg`, `fooody-merch.jpg`)
+- Menu photography lives in `public/images/menu/`

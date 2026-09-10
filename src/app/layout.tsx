@@ -74,14 +74,13 @@ export default function RootLayout({
       lang="en-IN"
       className={`${plusJakarta.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="site-shell min-h-full font-sans">
+      <body className="min-h-full font-sans">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[80] focus:rounded-full focus:bg-ivory focus:px-4 focus:py-2 focus:text-obsidian"
         >
           Skip to content
         </a>
-        <div className="grain" aria-hidden="true" />
         <Providers>{children}</Providers>
       </body>
     </html>

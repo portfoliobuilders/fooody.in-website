@@ -8,7 +8,7 @@ export function Footer() {
   const loop = [...KERALA_CITIES, ...KERALA_CITIES];
 
   return (
-    <footer className="relative z-[2] border-t border-white/10 px-4 pt-10 pb-24 sm:px-6 sm:pb-8 lg:px-8">
+    <footer className="relative z-[2] border-t border-white/10 bg-[#0B0F17] px-4 pt-10 pb-24 text-ivory sm:px-6 sm:pb-8 lg:px-8">
       <div className="marquee mb-10">
         <div className="marquee-track gap-10 px-6 text-sm tracking-[0.22em] text-gold/70 uppercase">
           {loop.map((city, i) => (
@@ -22,7 +22,7 @@ export function Footer() {
 
       <div className="mx-auto flex max-w-7xl flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <Logo />
+          <Logo markId="footer" />
           <p className="mt-3 max-w-sm text-sm text-mist">
             Kerala’s original food-tech pioneer. India’s direct ordering
             platform for restaurants that want their customers back.
@@ -30,17 +30,17 @@ export function Footer() {
         </div>
         <nav className="grid grid-cols-2 gap-8 text-sm" aria-label="Footer">
           <div className="flex flex-col gap-2">
-            <HashLink href="/#story" className="text-ivory/80 hover:text-ivory">
-              Story
-            </HashLink>
-            <HashLink href="/#features" className="text-ivory/80 hover:text-ivory">
-              Platform
-            </HashLink>
-            <HashLink href="/#pricing" className="text-ivory/80 hover:text-ivory">
-              Pricing
-            </HashLink>
-            <HashLink href="/#waitlist" className="text-ivory/80 hover:text-ivory">
-              Waitlist
+            <Link href="/" className="text-ivory/80 hover:text-ivory">
+              Order food
+            </Link>
+            <Link href="/our-story/" className="text-ivory/80 hover:text-ivory">
+              Our Story
+            </Link>
+            <Link href="/for-restaurants/" className="text-ivory/80 hover:text-ivory">
+              For Restaurants
+            </Link>
+            <HashLink href="/for-restaurants/#waitlist" className="text-ivory/80 hover:text-ivory">
+              Partner Support
             </HashLink>
           </div>
           <div className="flex flex-col gap-2">
@@ -54,7 +54,7 @@ export function Footer() {
               href={`mailto:${SITE.email}`}
               className="inline-flex items-center gap-2 text-ivory/80 hover:text-ivory"
             >
-              <Mail size={14} /> {SITE.email}
+              <Mail size={14} /> Contact
             </a>
           </div>
         </nav>
@@ -78,7 +78,7 @@ export function Footer() {
 
       <div className="kasavu-line mx-auto mt-10 max-w-7xl" />
       <p className="mx-auto mt-6 max-w-7xl text-center text-sm text-mist">
-        Proudly Born in Kerala • Built for Restaurants Across India
+        Pioneered in Kerala (2016) • Empowering Restaurant Direct Orders (2026)
       </p>
     </footer>
   );

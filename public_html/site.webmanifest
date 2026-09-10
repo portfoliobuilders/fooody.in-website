@@ -1,11 +1,11 @@
 {
   "name": "Fooody.in",
   "short_name": "Fooody",
-  "description": "Kerala’s food-tech pioneer. India’s 0% commission direct ordering platform for restaurants.",
+  "description": "Order food direct in Kochi. ₹0 platform fee. Restaurants claim fooody.in/your-brand.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#090D16",
-  "theme_color": "#090D16",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0B0F17",
   "icons": [
     {
       "src": "/favicon.svg",

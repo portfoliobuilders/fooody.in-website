@@ -42,7 +42,7 @@ export function Hero() {
               Launch Your Restaurant Channel
               <ArrowRight size={16} />
             </button>
-            <HashLink href="/#story" className="btn-ghost">
+            <HashLink href="/our-story/" className="btn-ghost">
               Explore The 2016 Origin Story
               <ArrowRight size={16} />
             </HashLink>

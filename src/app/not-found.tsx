@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <Logo />
+    <main className="site-shell flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <Logo markId="not-found" />
       <h1 className="font-display mt-8 text-4xl font-extrabold">
         This table is empty.
       </h1>

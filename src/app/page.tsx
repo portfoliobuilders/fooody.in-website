@@ -1,37 +1,31 @@
-import { Audience } from "@/components/audience";
-import { Calculator } from "@/components/calculator";
-import { Faq } from "@/components/faq";
-import { Features } from "@/components/features";
+import { CategoryRail } from "@/components/category-rail";
+import { ClaimBanner } from "@/components/claim-banner";
+import { ConsumerHeader } from "@/components/consumer-header";
 import { Footer } from "@/components/footer";
-import { Hero } from "@/components/hero";
+import { MarketplaceBoot } from "@/components/hash-scroller";
 import { JsonLd } from "@/components/json-ld";
-import { Manifesto } from "@/components/manifesto";
-import { MobileCta } from "@/components/mobile-cta";
-import { Navbar } from "@/components/navbar";
-import { OriginStory } from "@/components/origin-story";
-import { Philosophy } from "@/components/philosophy";
-import { Pricing } from "@/components/pricing";
-import { WaitlistSection } from "@/components/waitlist-section";
+import { MenuGrid } from "@/components/menu-grid";
+import { PageShell } from "@/components/page-shell";
+import { PromiseCards } from "@/components/promise-cards";
+import { StoryTeaser } from "@/components/story-teaser";
 
 export default function Home() {
   return (
-    <>
+    <PageShell variant="market">
       <JsonLd />
-      <Navbar />
-      <main id="main" className="relative z-[2] pb-24 sm:pb-0">
-        <Hero />
-        <Philosophy />
-        <OriginStory />
-        <Calculator />
-        <Features />
-        <Audience />
-        <Manifesto />
-        <Pricing />
-        <WaitlistSection />
-        <Faq />
+      <MarketplaceBoot />
+      <ConsumerHeader />
+      <main id="main" className="relative z-[2] pb-28">
+        <h1 className="sr-only">
+          Order food direct in Kochi on Fooody.in — ₹0 platform fee, ₹0 surge, real menu prices
+        </h1>
+        <ClaimBanner />
+        <PromiseCards />
+        <CategoryRail />
+        <MenuGrid />
+        <StoryTeaser />
       </main>
       <Footer />
-      <MobileCta />
-    </>
+    </PageShell>
   );
 }

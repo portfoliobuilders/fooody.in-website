@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <>
+    <PageShell variant="editorial">
       <Navbar />
       <main id="main" className="relative z-[2] mx-auto max-w-3xl px-4 py-28 sm:px-6">
         <p className="gold-text text-sm tracking-[0.2em] uppercase">Legal</p>
@@ -61,6 +62,6 @@ export default function TermsPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </PageShell>
   );
 }

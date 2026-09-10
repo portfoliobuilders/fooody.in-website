@@ -15,7 +15,18 @@ export function JsonLd() {
       },
       description: SITE.description,
       areaServed: "IN",
-      slogan: "Getting orders is easy. Owning your customers is power.",
+      slogan: "₹0 platform fee. Real menu prices. Restaurants own their guests.",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE.name,
+      url: SITE.url,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${SITE.url}/?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
     },
     {
       "@context": "https://schema.org",
