@@ -6,11 +6,12 @@ import { PoweredBy } from "@/components/powered-by";
 import { KERALA_CITIES, SITE } from "@/lib/site";
 
 const PRODUCT_LINKS = [
-  { href: "/#story", label: "Story" },
-  { href: "/#features", label: "Platform" },
-  { href: "/#pricing", label: "Pricing" },
-  { href: "/#faq", label: "FAQ" },
-  { href: "/#waitlist", label: "Waitlist" },
+  { href: "/", label: "Order food" },
+  { href: "/our-story/", label: "Our Story" },
+  { href: "/for-restaurants/", label: "For Restaurants" },
+  { href: "/for-restaurants/#features", label: "Platform" },
+  { href: "/for-restaurants/#pricing", label: "Pricing" },
+  { href: "/for-restaurants/#waitlist", label: "Partner Support" },
 ] as const;
 
 const COMPANY_LINKS = [
@@ -30,7 +31,7 @@ export function Footer() {
   const loop = [...KERALA_CITIES, ...KERALA_CITIES];
 
   return (
-    <footer className="relative z-[2] border-t border-white/10 px-4 pt-10 pb-24 sm:px-6 sm:pb-8 lg:px-8">
+    <footer className="relative z-[2] border-t border-white/10 bg-[#0B0F17] px-4 pt-10 pb-24 text-ivory sm:px-6 sm:pb-8 lg:px-8">
       <div className="marquee mb-10">
         <div className="marquee-track gap-10 px-6 text-sm tracking-[0.22em] text-gold/70 uppercase">
           {loop.map((city, i) => (
@@ -44,7 +45,7 @@ export function Footer() {
 
       <div className="mx-auto flex max-w-7xl flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <Logo />
+          <Logo markId="footer" />
           <p className="mt-3 max-w-sm text-sm text-mist">
             Kerala’s original food-tech pioneer. India’s direct ordering
             platform for restaurants that want their customers back.
@@ -87,7 +88,7 @@ export function Footer() {
       <div className="kasavu-line mx-auto mt-10 max-w-7xl" />
       <div className="mx-auto mt-6 flex max-w-7xl flex-col items-center gap-5">
         <p className="text-center text-sm text-mist">
-          Proudly Born in Kerala • Built for Restaurants Across India
+          Pioneered in Kerala (2016) • Empowering Restaurant Direct Orders (2026)
         </p>
         <PoweredBy />
       </div>

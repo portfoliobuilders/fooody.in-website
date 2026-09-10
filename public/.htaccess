@@ -1,6 +1,8 @@
 # Hostinger / Apache helpers for the static Next.js export
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteRule ^our-story\.html$ /our-story/ [L,R=301]
+  RewriteRule ^for-restaurants\.html$ /for-restaurants/ [L,R=301]
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP_HOST} ^(www\.)?fooody\.in$ [NC]
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

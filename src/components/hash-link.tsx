@@ -4,6 +4,11 @@ import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+function normalizePath(path: string) {
+  if (!path || path === "/") return "/";
+  return path.endsWith("/") ? path : `${path}/`;
+}
+
 function scrollToId(id: string) {
   const node = document.getElementById(id);
   if (!node) return;
@@ -22,18 +27,21 @@ export function HashLink({
   onClick?: () => void;
 }) {
   const pathname = usePathname();
-  const hash = href.includes("#") ? href.slice(href.indexOf("#") + 1) : "";
+  const hashIndex = href.indexOf("#");
+  const hash = hashIndex >= 0 ? href.slice(hashIndex + 1) : "";
+  const hrefPath = normalizePath(hashIndex >= 0 ? href.slice(0, hashIndex) : href);
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     if (!hash) {
       onClick?.();
       return;
     }
-    const onHome = pathname === "/" || pathname === "";
-    if (onHome) {
+    const current = normalizePath(pathname);
+    const target = hrefPath || current;
+    if (target === current) {
       event.preventDefault();
       scrollToId(hash);
-      window.history.replaceState(null, "", `#${hash}`);
+      window.history.replaceState(null, "", `${current === "/" ? "" : current}#${hash}`);
     }
     onClick?.();
   }

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
 
 export function LegalPage({
   kicker = "Legal",
@@ -14,7 +15,7 @@ export function LegalPage({
   children: ReactNode;
 }) {
   return (
-    <>
+    <PageShell variant="editorial">
       <Navbar />
       <main id="main" className="relative z-[2] mx-auto max-w-3xl px-4 py-28 sm:px-6">
         <p className="gold-text text-sm tracking-[0.2em] uppercase">{kicker}</p>
@@ -25,6 +26,6 @@ export function LegalPage({
         <div className="prose-legal mt-8 space-y-5 text-ivory/80">{children}</div>
       </main>
       <Footer />
-    </>
+    </PageShell>
   );
 }

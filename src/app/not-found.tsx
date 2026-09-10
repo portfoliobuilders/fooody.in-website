@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
 import { Navbar } from "@/components/navbar";
+import { PageShell } from "@/components/page-shell";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -11,13 +12,13 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <>
+    <PageShell variant="editorial">
       <Navbar />
       <main
         id="main"
         className="relative z-[2] flex min-h-[70vh] flex-col items-center justify-center px-6 py-28 text-center"
       >
-        <Logo />
+        <Logo markId="not-found" />
         <h1 className="font-display mt-8 text-4xl font-extrabold">
           This table is empty.
         </h1>
@@ -29,6 +30,6 @@ export default function NotFound() {
         </Link>
       </main>
       <Footer />
-    </>
+    </PageShell>
   );
 }

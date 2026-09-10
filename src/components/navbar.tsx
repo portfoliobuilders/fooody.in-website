@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, ShoppingBag, X } from "lucide-react";
+import { useCart } from "@/components/cart-context";
 import { HashLink } from "@/components/hash-link";
 import { Logo } from "@/components/logo";
 import { useWaitlist } from "@/components/waitlist-context";
@@ -9,6 +10,7 @@ import { NAV_LINKS } from "@/lib/site";
 
 export function Navbar() {
   const { openWaitlist } = useWaitlist();
+  const { itemCount, setDrawerOpen } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -32,7 +34,7 @@ export function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
-          <Logo />
+          <Logo markId="editorial-nav" />
           <span className="pill hidden xl:inline-flex">
             Pioneering Kerala Food Tech Since 2016
           </span>
@@ -51,6 +53,14 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-sm font-semibold text-ivory"
+            onClick={() => setDrawerOpen(true)}
+          >
+            <ShoppingBag size={16} />
+            {itemCount}
+          </button>
           <button
             type="button"
             className="btn-primary hidden px-4 py-2.5 text-sm lg:inline-flex"
