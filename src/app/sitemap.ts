@@ -3,26 +3,23 @@ import { SITE } from "@/lib/site";
 
 export const dynamic = "force-static";
 
+const PATHS = [
+  "/",
+  "/about/",
+  "/contact/",
+  "/terms/",
+  "/privacy/",
+  "/cookies/",
+  "/disclaimer/",
+  "/refunds/",
+] as const;
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  return [
-    {
-      url: `${SITE.url}/`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${SITE.url}/terms/`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${SITE.url}/privacy/`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-  ];
+  return PATHS.map((path) => ({
+    url: `${SITE.url}${path}`,
+    lastModified: now,
+    changeFrequency: path === "/" ? "weekly" : "yearly",
+    priority: path === "/" ? 1 : 0.4,
+  }));
 }
