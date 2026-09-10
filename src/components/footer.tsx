@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { HashLink } from "@/components/hash-link";
 import { Logo } from "@/components/logo";
 import { KERALA_CITIES, SITE } from "@/lib/site";
 
@@ -7,7 +8,7 @@ export function Footer() {
   const loop = [...KERALA_CITIES, ...KERALA_CITIES];
 
   return (
-    <footer className="border-t border-white/10 px-4 pt-10 pb-24 sm:px-6 sm:pb-8 lg:px-8">
+    <footer className="relative z-[2] border-t border-white/10 px-4 pt-10 pb-24 sm:px-6 sm:pb-8 lg:px-8">
       <div className="marquee mb-10">
         <div className="marquee-track gap-10 px-6 text-sm tracking-[0.22em] text-gold/70 uppercase">
           {loop.map((city, i) => (
@@ -29,18 +30,18 @@ export function Footer() {
         </div>
         <nav className="grid grid-cols-2 gap-8 text-sm" aria-label="Footer">
           <div className="flex flex-col gap-2">
-            <Link href="/#story" className="text-ivory/80 hover:text-ivory">
+            <HashLink href="/#story" className="text-ivory/80 hover:text-ivory">
               Story
-            </Link>
-            <Link href="/#features" className="text-ivory/80 hover:text-ivory">
+            </HashLink>
+            <HashLink href="/#features" className="text-ivory/80 hover:text-ivory">
               Platform
-            </Link>
-            <Link href="/#pricing" className="text-ivory/80 hover:text-ivory">
+            </HashLink>
+            <HashLink href="/#pricing" className="text-ivory/80 hover:text-ivory">
               Pricing
-            </Link>
-            <Link href="/#waitlist" className="text-ivory/80 hover:text-ivory">
+            </HashLink>
+            <HashLink href="/#waitlist" className="text-ivory/80 hover:text-ivory">
               Waitlist
-            </Link>
+            </HashLink>
           </div>
           <div className="flex flex-col gap-2">
             <Link href="/terms/" className="text-ivory/80 hover:text-ivory">

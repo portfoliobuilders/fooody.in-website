@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useRef, type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 export function Reveal({
   children,
@@ -11,32 +9,12 @@ export function Reveal({
   className?: string;
   delay?: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          node.classList.add("is-in");
-          observer.unobserve(node);
-        }
-      },
-      { threshold: 0.16, rootMargin: "0px 0px -8% 0px" },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  const style = delay
+    ? ({ animationDelay: `${delay}ms` } as CSSProperties)
+    : undefined;
 
   return (
-    <div
-      ref={ref}
-      className={`reveal ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+    <div className={`reveal ${className}`} style={style}>
       {children}
     </div>
   );

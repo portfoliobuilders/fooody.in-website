@@ -18,7 +18,7 @@ export default function Home() {
     <>
       <JsonLd />
       <Navbar />
-      <main id="main" className="pb-24 sm:pb-0">
+      <main id="main" className="relative z-[2] pb-24 sm:pb-0">
         <Hero />
         <Philosophy />
         <OriginStory />

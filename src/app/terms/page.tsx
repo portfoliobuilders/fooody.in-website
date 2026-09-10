@@ -13,7 +13,7 @@ export default function TermsPage() {
   return (
     <>
       <Navbar />
-      <main id="main" className="mx-auto max-w-3xl px-4 py-28 sm:px-6">
+      <main id="main" className="relative z-[2] mx-auto max-w-3xl px-4 py-28 sm:px-6">
         <p className="gold-text text-sm tracking-[0.2em] uppercase">Legal</p>
         <h1 className="font-display mt-3 text-4xl font-extrabold">
           Terms of Use

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, Clock3, Database, Percent, Repeat } from "lucide-react";
+import { HashLink } from "@/components/hash-link";
 import { useWaitlist } from "@/components/waitlist-context";
 
 const PROOF = [
@@ -41,10 +42,10 @@ export function Hero() {
               Launch Your Restaurant Channel
               <ArrowRight size={16} />
             </button>
-            <a href="#story" className="btn-ghost">
+            <HashLink href="/#story" className="btn-ghost">
               Explore The 2016 Origin Story
               <ArrowRight size={16} />
-            </a>
+            </HashLink>
           </div>
           <dl className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {PROOF.map((item) => (

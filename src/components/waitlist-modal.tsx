@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { useWaitlist } from "@/components/waitlist-context";
@@ -17,7 +18,11 @@ export function WaitlistModal() {
     };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector("input")?.focus();
+    window.setTimeout(() => {
+      panelRef.current
+        ?.querySelector<HTMLElement>("input, select, button")
+        ?.focus();
+    }, 20);
 
     return () => {
       document.removeEventListener("keydown", onKey);
@@ -25,11 +30,11 @@ export function WaitlistModal() {
     };
   }, [isOpen, closeWaitlist]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <div
-      className="modal-backdrop fixed inset-0 z-[70] flex items-end justify-center p-4 sm:items-center"
+      className="modal-backdrop fixed inset-0 z-[90] flex items-end justify-center p-4 sm:items-center"
       role="presentation"
       onClick={closeWaitlist}
     >
@@ -38,7 +43,7 @@ export function WaitlistModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="waitlist-title"
-        className="card-lux relative w-full max-w-lg p-6 sm:p-8"
+        className="card-lux relative z-[91] w-full max-w-lg p-6 sm:p-8"
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -57,6 +62,7 @@ export function WaitlistModal() {
         </p>
         <WaitlistForm idPrefix="modal" source={source} />
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { HashLink } from "@/components/hash-link";
 import { Logo } from "@/components/logo";
 import { useWaitlist } from "@/components/waitlist-context";
 import { NAV_LINKS } from "@/lib/site";
@@ -28,7 +28,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`glass-nav fixed inset-x-0 top-0 z-50 ${scrolled ? "is-scrolled" : ""}`}
+      className={`glass-nav fixed inset-x-0 top-0 z-[80] ${scrolled ? "is-scrolled" : ""}`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
@@ -40,13 +40,13 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => (
-            <Link
+            <HashLink
               key={link.href}
               href={link.href}
               className="text-[0.82rem] font-medium tracking-wide text-ivory/70 transition-colors hover:text-ivory"
             >
               {link.label}
-            </Link>
+            </HashLink>
           ))}
         </nav>
 
@@ -74,14 +74,14 @@ export function Navbar() {
         <div className="border-t border-white/10 bg-obsidian/95 px-4 py-5 lg:hidden">
           <nav className="flex flex-col gap-3" aria-label="Mobile">
             {NAV_LINKS.map((link) => (
-              <Link
+              <HashLink
                 key={link.href}
                 href={link.href}
                 className="rounded-xl px-3 py-3 text-ivory/85 hover:bg-white/5"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
-              </Link>
+              </HashLink>
             ))}
             <button
               type="button"
