@@ -2,6 +2,13 @@
 
 Consumer food-ordering homepage plus restaurant **claim-your-URL** engine for **Fooody.in** — Kerala’s original food-tech pioneer (2016), returning in 2026 with **₹0 platform fee** for guests and **0% commission** direct stores for kitchens.
 
+This repository has two Next.js apps:
+
+| App | Folder | What it is |
+| --- | --- | --- |
+| Marketing site | repo root (`src/`) | Public Fooody.in website. Static export for Hostinger `public_html`. |
+| Partner portal | [`partner-portal/`](./partner-portal) | Restaurant OS: POS, KDS, QR dine-in, WhatsApp, payments, dispatch. |
+
 This project uses **Next.js** so search engines get real HTML (titles, headings, sitemap, structured data). The production build is a folder of static files you can upload to **Hostinger `public_html`** — no Node server required on the host.
 
 ## Pages
@@ -41,12 +48,36 @@ To rebuild that zip after edits: `npm run package:pc`.
 
 Optional: set `NEXT_PUBLIC_WAITLIST_WEBHOOK` in a `.env.local` file before building if you want waitlist / claim-link submissions posted to Formspree, Make.com, Zapier, or Google Apps Script. Without it, the form still works and stores a confirmation in the browser.
 
+## Partner portal
+
+The restaurant operating system lives in **`partner-portal/`**. It is a separate Next.js app with its own `package.json` and Prisma schema.
+
+```bash
+cd partner-portal
+npm install
+npx prisma db push --force-reset
+npx prisma db seed
+npm run dev
+```
+
+Open [http://localhost:3000/login](http://localhost:3000/login). Demo accounts and webhook notes are in [`partner-portal/README.md`](./partner-portal/README.md).
+
 ## Checks
+
+Marketing site:
 
 ```bash
 npm run typecheck
 npm run lint
 npm run build
+```
+
+Partner portal:
+
+```bash
+cd partner-portal
+npm run typecheck
+npm run lint
 ```
 
 ## Brand notes

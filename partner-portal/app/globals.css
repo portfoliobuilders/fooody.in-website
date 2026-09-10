@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --obsidian: #090d16;
+  --charcoal: #111827;
+  --charcoal-lift: #162033;
+  --ivory: #f4efe6;
+  --mist: #8b96ab;
+  --flame: #ef4444;
+  --ember: #f97316;
+  --gold: #d4af7a;
+  --background: #f6f1e8;
+  --foreground: #111827;
+}
+
+.dark {
+  --background: #090d16;
+  --foreground: #f4efe6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-obsidian: var(--obsidian);
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-lift: var(--charcoal-lift);
+  --color-ivory: var(--ivory);
+  --color-mist: var(--mist);
+  --color-flame: var(--flame);
+  --color-ember: var(--ember);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-plus-jakarta);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+.gradient-text {
+  color: transparent;
+  background: linear-gradient(120deg, #fff7ed 0%, #fdba74 32%, #ef4444 68%, #f97316 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
