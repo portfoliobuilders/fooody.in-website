@@ -53,7 +53,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="btn-primary hidden px-4 py-2.5 text-sm sm:inline-flex"
+            className="btn-primary hidden px-4 py-2.5 text-sm lg:inline-flex"
             onClick={() => openWaitlist("nav")}
           >
             Claim Your Direct Channel

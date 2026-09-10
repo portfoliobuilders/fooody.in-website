@@ -110,7 +110,7 @@ export function Audience() {
           <Reveal>
             <div role="tabpanel" className="card-lux p-8">
               <p className="text-xs tracking-[0.18em] text-gold uppercase">
-                Format playbook
+                {tab.label}
               </p>
               <h3 className="font-display mt-3 text-2xl font-bold">
                 {tab.headline}
