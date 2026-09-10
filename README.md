@@ -55,7 +55,7 @@ The restaurant operating system lives in **`partner-portal/`**. It is a separate
 ```bash
 cd partner-portal
 npm install
-npx prisma db push --force-reset
+npx prisma migrate deploy
 npx prisma db seed
 npm run dev
 ```

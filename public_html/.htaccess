@@ -6,6 +6,14 @@
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP_HOST} ^(www\.)?fooody\.in$ [NC]
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Product OS lives on Railway (Option A). Brochure stays on this host.
+  RewriteRule ^login(/.*)?$ https://app.fooody.in/login$1 [R=302,L]
+  RewriteRule ^dashboard(/.*)?$ https://app.fooody.in/dashboard$1 [R=302,L]
+  RewriteRule ^marketplace(/.*)?$ https://app.fooody.in/marketplace$1 [R=302,L]
+  RewriteRule ^malabar-kitchen(/.*)?$ https://app.fooody.in/malabar-kitchen$1 [R=302,L]
+  RewriteRule ^qr(/.*)?$ https://app.fooody.in/qr$1 [R=302,L]
+  RewriteRule ^track(/.*)?$ https://app.fooody.in/track$1 [R=302,L]
 </IfModule>
 
 <IfModule mod_headers.c>

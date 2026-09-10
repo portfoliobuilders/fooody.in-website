@@ -1,14 +1,16 @@
 // Fooody.in unified restaurant OS
-// Local: SQLite (npm run db:reset). Production: switch provider to postgresql
-// and apply prisma/supabase-rls.sql — every tenant row is keyed by restaurantId.
+// PostgreSQL in every environment. Apply prisma/supabase-rls.sql only after
+// migrate deploy if you add a non-superuser DB role — Prisma uses DATABASE_URL
+// and currently bypasses RLS. Tenant rows are keyed by restaurantId.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ---------------------------------------------------------------------------

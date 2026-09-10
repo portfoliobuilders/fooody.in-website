@@ -5,13 +5,13 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
-    "build:hostinger": "prisma generate && prisma db push && tsx prisma/seed.ts && next build",
     "start": "next start",
+    "start:prod": "prisma migrate deploy && next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:reset": "prisma db push --force-reset && prisma db seed"
+    "db:reset": "prisma migrate reset --force"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

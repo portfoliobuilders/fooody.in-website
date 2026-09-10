@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "Restaurant operating system for fooody.in — orders, menu, tables, payouts.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-IN" className={`${inter.variable} ${jakarta.variable} h-full`} suppressHydrationWarning>

@@ -75,7 +75,6 @@ export function Storefront({ slug, tableNumber }: { slug: string; tableNumber?: 
         customerNotes: notes,
         couponCode: coupon || undefined,
         paymentGateway: tableNumber ? "UPI" : "RAZORPAY",
-        paymentStatus: tableNumber ? "PENDING" : "PAID",
         lines: cart.map((line) => ({
           menuItemId: line.item.id,
           variantName: line.variant,

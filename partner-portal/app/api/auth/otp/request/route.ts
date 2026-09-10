@@ -8,12 +8,15 @@ const schema = z.object({ phone: z.string().min(10).max(15) });
 
 export async function POST(request: Request) {
   try {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Phone OTP is disabled in production. Sign in with email and password." },
+        { status: 403 },
+      );
+    }
     const { phone } = schema.parse(await request.json());
     const demo = process.env.AUTH_DEMO_OTP ?? "123456";
-    const code = process.env.NODE_ENV === "production" && !process.env.AUTH_DEMO_OTP
-      ? String(Math.floor(100000 + Math.random() * 900000))
-      : demo;
-    const codeHash = await bcrypt.hash(code, 8);
+    const codeHash = await bcrypt.hash(demo, 8);
     await prisma.otpChallenge.create({
       data: {
         phone,
@@ -24,8 +27,8 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({
       ok: true,
-      demo: Boolean(process.env.AUTH_DEMO_OTP),
-      hint: process.env.AUTH_DEMO_OTP ? "Demo OTP is 123456" : undefined,
+      demo: true,
+      hint: `Demo OTP is ${demo}`,
     });
   } catch (error) {
     return jsonError(error);

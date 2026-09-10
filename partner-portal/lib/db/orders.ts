@@ -220,6 +220,8 @@ function couponMatchesChannel(couponChannel: string, orderChannel: FulfillmentCh
   return false;
 }
 
+export type OrderPaymentStatus = "PENDING" | "CASH_ON_DELIVERY" | "PAID";
+
 export async function createOrder(input: {
   restaurantId: string;
   channel: FulfillmentChannel;
@@ -230,10 +232,12 @@ export async function createOrder(input: {
   tableNumber?: string;
   couponCode?: string;
   paymentGateway?: "RAZORPAY" | "CASHFREE" | "STRIPE" | "UPI" | "CASH";
-  paymentStatus?: "PAID" | "CASH_ON_DELIVERY" | "PENDING";
+  /** Defaults to PENDING. PAID is only for verified webhooks or authenticated staff. */
+  paymentStatus?: OrderPaymentStatus;
   lines: IncomingLine[];
   marketplace?: boolean;
 }) {
+  const paymentStatus: OrderPaymentStatus = input.paymentStatus ?? "PENDING";
   const restaurant = await prisma.restaurant.findUnique({
     where: { id: input.restaurantId },
     include: { commissionRules: true },
@@ -327,7 +331,7 @@ export async function createOrder(input: {
     deliveryFeePaise,
     platformFeePaise,
     gstPaise,
-    gatewayFeePaise: input.paymentStatus === "PAID" ? Math.round(subtotalPaise * 0.018) : 0,
+    gatewayFeePaise: paymentStatus === "PAID" ? Math.round(subtotalPaise * 0.018) : 0,
   });
 
   const order = await prisma.$transaction(async (tx) => {
@@ -375,10 +379,10 @@ export async function createOrder(input: {
           create: {
             restaurantId: input.restaurantId,
             gateway: input.paymentGateway ?? (input.channel === "DINE_IN" ? "UPI" : "RAZORPAY"),
-            status: input.paymentStatus ?? "PAID",
+            status: paymentStatus,
             amountPaise: money.totalPaise,
-            reference: input.paymentStatus === "CASH_ON_DELIVERY" ? null : `pay_${Date.now()}`,
-            settled: input.paymentStatus === "PAID",
+            reference: paymentStatus === "CASH_ON_DELIVERY" ? null : `pay_${Date.now()}`,
+            settled: paymentStatus === "PAID",
           },
         },
       },

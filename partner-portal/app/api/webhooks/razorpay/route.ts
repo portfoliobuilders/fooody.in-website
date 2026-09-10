@@ -3,9 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { publishTenantEvent } from "@/lib/realtime/order-bus";
 
-function validSignature(raw: string, signature: string | null) {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-  if (!secret) return true;
+function validSignature(raw: string, signature: string | null, secret: string) {
   if (!signature) return false;
   const expected = createHmac("sha256", secret).update(raw).digest("hex");
   const a = Buffer.from(expected);
@@ -14,8 +12,12 @@ function validSignature(raw: string, signature: string | null) {
 }
 
 export async function POST(request: Request) {
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET?.trim();
+  if (!secret) {
+    return NextResponse.json({ error: "Razorpay webhook is not configured" }, { status: 500 });
+  }
   const raw = await request.text();
-  if (!validSignature(raw, request.headers.get("x-razorpay-signature"))) {
+  if (!validSignature(raw, request.headers.get("x-razorpay-signature"), secret)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
   const payload = JSON.parse(raw) as {

@@ -43,12 +43,13 @@ export function LoginForm() {
       body: JSON.stringify({ phone }),
     });
     setBusy(false);
+    const data = (await res.json()) as { error?: string; hint?: string };
     if (!res.ok) {
-      toast.error("Could not send OTP");
+      toast.error(data.error ?? "Could not send OTP");
       return;
     }
     setOtpSent(true);
-    toast.success("Demo OTP is 123456");
+    toast.success(data.hint ?? "OTP sent");
   }
 
   async function verifyOtp() {
@@ -83,7 +84,7 @@ export function LoginForm() {
           <Tabs defaultValue="email">
             <TabsList className="bg-white/10">
               <TabsTrigger value="email">Email</TabsTrigger>
-              <TabsTrigger value="otp">Phone OTP</TabsTrigger>
+              {process.env.NODE_ENV !== "production" ? <TabsTrigger value="otp">Phone OTP</TabsTrigger> : null}
             </TabsList>
             <TabsContent value="email" className="mt-4 space-y-3">
               <Label>Email</Label>
@@ -94,6 +95,7 @@ export function LoginForm() {
                 Sign in
               </Button>
             </TabsContent>
+            {process.env.NODE_ENV !== "production" ? (
             <TabsContent value="otp" className="mt-4 space-y-3">
               <Label>Phone</Label>
               <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
@@ -111,6 +113,7 @@ export function LoginForm() {
                 {otpSent ? "Verify OTP" : "Send OTP"}
               </Button>
             </TabsContent>
+            ) : null}
           </Tabs>
           <p className="text-xs text-mist">
             Demo: owner@fooody.in / Fooody@2026 · kitchen@fooody.in · cashier@fooody.in · phone 9876543210 / 123456

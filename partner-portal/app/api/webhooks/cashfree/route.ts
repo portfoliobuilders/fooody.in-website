@@ -3,9 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { publishTenantEvent } from "@/lib/realtime/order-bus";
 
-function valid(raw: string, signature: string | null, timestamp: string | null) {
-  const secret = process.env.CASHFREE_WEBHOOK_SECRET;
-  if (!secret) return true;
+function valid(raw: string, signature: string | null, timestamp: string | null, secret: string) {
   if (!signature || !timestamp) return false;
   const expected = createHmac("sha256", secret).update(`${timestamp}${raw}`).digest("base64");
   const a = Buffer.from(expected);
@@ -14,8 +12,12 @@ function valid(raw: string, signature: string | null, timestamp: string | null) 
 }
 
 export async function POST(request: Request) {
+  const secret = process.env.CASHFREE_WEBHOOK_SECRET?.trim();
+  if (!secret) {
+    return NextResponse.json({ error: "Cashfree webhook is not configured" }, { status: 500 });
+  }
   const raw = await request.text();
-  if (!valid(raw, request.headers.get("x-webhook-signature"), request.headers.get("x-webhook-timestamp"))) {
+  if (!valid(raw, request.headers.get("x-webhook-signature"), request.headers.get("x-webhook-timestamp"), secret)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
   const payload = JSON.parse(raw) as {

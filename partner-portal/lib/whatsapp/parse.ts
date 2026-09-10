@@ -29,8 +29,8 @@ type MetaPayload = {
 };
 
 export function verifyWhatsAppSignature(rawBody: string, signatureHeader: string | null) {
-  const secret = process.env.WHATSAPP_APP_SECRET;
-  if (!secret) return true;
+  const secret = process.env.WHATSAPP_APP_SECRET?.trim();
+  if (!secret) return false;
   if (!signatureHeader?.startsWith("sha256=")) return false;
   const expected = createHmac("sha256", secret).update(rawBody).digest("hex");
   const provided = signatureHeader.slice("sha256=".length);

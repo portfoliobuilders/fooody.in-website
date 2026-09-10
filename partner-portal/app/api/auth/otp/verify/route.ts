@@ -12,6 +12,12 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Phone OTP is disabled in production. Sign in with email and password." },
+        { status: 403 },
+      );
+    }
     const { phone, code } = schema.parse(await request.json());
     const challenge = await prisma.otpChallenge.findFirst({
       where: { phone, consumed: false, expiresAt: { gt: new Date() } },

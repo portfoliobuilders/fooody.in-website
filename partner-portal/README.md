@@ -7,7 +7,7 @@ Multi-tenant restaurant OS for **fooody.in**: partner POS/KDS + branded storefro
 ```bash
 cd partner-portal
 npm install
-npx prisma db push --force-reset
+npx prisma migrate deploy
 npx prisma db seed
 npm run dev
 ```
@@ -35,10 +35,10 @@ Subdomain routing (same store): `http://malabar-kitchen.localhost:3000`
 
 ## Production (Supabase / Postgres)
 
-1. Point `DATABASE_URL` at Supabase Postgres.
-2. Change `prisma/schema.prisma` `datasource.provider` to `postgresql`.
-3. Run `npx prisma migrate dev`.
-4. Apply `prisma/supabase-rls.sql`.
-5. Set `SESSION_SECRET`, WhatsApp Cloud API, Razorpay/Cashfree webhook secrets, optional Upstash Redis, Uber Direct / Porter keys.
+1. Set `DATABASE_URL` (pooler) and `DIRECT_URL` (direct 5432) to Supabase Postgres.
+2. Run `npx prisma migrate deploy` (or `npm run start:prod`).
+3. Seed once on an empty database (`npx prisma db seed`), then rotate demo passwords. Do not seed again.
+4. Optional: apply `prisma/supabase-rls.sql` only if Prisma uses a non-superuser role. App isolation is `requireMembership` + `restaurantId`.
+5. Set `SESSION_SECRET`. Razorpay/Cashfree/WhatsApp webhook secrets must be set or those routes return 500 (fail closed). OTP login is disabled in production.
 
 Every tenant query is scoped by `restaurantId` from the staff membership — not from client input alone.
