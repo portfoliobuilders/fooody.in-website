@@ -1,0 +1,16 @@
+{
+  "name": "Fooody.in",
+  "short_name": "Fooody",
+  "description": "Kerala’s food-tech pioneer. India’s 0% commission direct ordering platform for restaurants.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090D16",
+  "theme_color": "#090D16",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

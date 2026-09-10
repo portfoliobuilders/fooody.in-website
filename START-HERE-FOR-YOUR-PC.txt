@@ -1,0 +1,17 @@
+HOW TO GET THIS WEBSITE ON YOUR PC
+==================================
+
+1. Download this file from GitHub:
+   Fooody.in-website-for-PC.zip
+
+2. Unzip it (right-click → Extract All).
+
+3. Open the folder called public_html.
+
+4. Windows: double-click start-on-windows.bat
+   Mac:     double-click start-on-mac-or-linux.command
+
+Your browser will open the Fooody.in website.
+
+To publish on Hostinger, upload everything inside public_html
+into Hostinger’s public_html folder.

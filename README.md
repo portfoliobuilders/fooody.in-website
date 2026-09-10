@@ -13,12 +13,22 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Open it on your PC (no coding)
+
+Download **`Fooody.in-website-for-PC.zip`**, unzip it, open `public_html`, then:
+
+- Windows: double-click `start-on-windows.bat`
+- Mac: double-click `start-on-mac-or-linux.command`
+
+Read `START-HERE-FOR-YOUR-PC.txt` if you want the short version.
+
+To rebuild that zip after edits: `npm run package:pc`.
+
 ## Deploy to Hostinger
 
-1. Run `npm run build`.
-2. Everything you need is in the **`out/`** folder (`index.html`, CSS, JS, images).
-3. Upload the **contents** of `out/` into Hostinger **`public_html`** (including `.htaccess`).
-4. Point the domain to that folder.
+1. Run `npm run build` (or `npm run package:pc`).
+2. Upload the **contents** of **`public_html/`** (or `out/`) into Hostinger **`public_html`**, including `.htaccess`.
+3. Point the domain to that folder.
 
 Optional: set `NEXT_PUBLIC_WAITLIST_WEBHOOK` in a `.env.local` file before building if you want waitlist submissions posted to Formspree, Make.com, Zapier, or Google Apps Script. Without it, the form still works and stores a confirmation in the browser.
 

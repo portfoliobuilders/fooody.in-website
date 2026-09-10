@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "preview": "npx --yes serve out -l 3000"
+    "preview": "npx --yes serve out -l 3000",
+    "package:pc": "next build && node scripts/make-pc-package.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.44.0",
