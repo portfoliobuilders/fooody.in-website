@@ -68,11 +68,10 @@ export function ConsumerHeader() {
         </HashLink>
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:px-8">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <Logo markId="consumer-nav" />
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6 lg:flex-nowrap lg:px-8">
+          <Logo markId="consumer-nav" className="order-1" />
 
-          <div className="relative min-w-0 flex-1 lg:flex-none" ref={locRef}>
+          <div className="relative order-2 min-w-0 flex-1 lg:max-w-[15rem] lg:flex-none" ref={locRef}>
             <button
               type="button"
               className="inline-flex w-full items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-ivory lg:max-w-[15rem]"
@@ -100,7 +99,7 @@ export function ConsumerHeader() {
 
           <HashLink
             href="/#claim"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-400/40 px-3 py-2 text-xs font-semibold text-ivory hover:bg-white/5 sm:text-sm"
+            className="order-3 inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-400/40 px-3 py-2 text-xs font-semibold text-ivory hover:bg-white/5 sm:text-sm lg:order-4"
           >
             <Store size={15} className="hidden text-rose-400 sm:block" />
             <span className="sm:hidden">Claim</span>
@@ -110,15 +109,14 @@ export function ConsumerHeader() {
 
           <button
             type="button"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-rose-900/20"
+            className="order-4 inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-rose-900/20 lg:order-5"
             onClick={() => setDrawerOpen(true)}
           >
             <ShoppingBag size={16} className="text-rose-600" />
             <span>{itemCount} items</span>
           </button>
-        </div>
 
-        <div className="relative min-w-0 flex-1" ref={searchRef}>
+        <div className="relative order-5 min-w-0 w-full flex-1 lg:order-3" ref={searchRef}>
           <label htmlFor={searchId} className="sr-only">
             Search dishes and restaurants
           </label>
