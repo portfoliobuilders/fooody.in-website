@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fooody.in Partner Portal
 
-## Getting Started
+Multi-tenant restaurant OS for **fooody.in**: partner POS/KDS + branded storefront (`fooody.in/[slug]` or `[slug].fooody.in`) + QR dine-in + WhatsApp commerce + hybrid dispatch.
 
-First, run the development server:
+## Run locally
 
 ```bash
+cd partner-portal
+npm install
+npx prisma db push --force-reset
+npx prisma db seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/login](http://localhost:3000/login)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Role | Email | Password |
+| --- | --- | --- |
+| Owner | owner@fooody.in | Fooody@2026 |
+| Manager | manager@fooody.in | Fooody@2026 |
+| Kitchen | kitchen@fooody.in | Fooody@2026 |
+| Cashier | cashier@fooody.in | Fooody@2026 |
+| Driver | driver@fooody.in | Fooody@2026 |
+| Super admin | admin@fooody.in | Fooody@2026 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Phone OTP demo: `9876543210` / `123456`
 
-## Learn More
+- Storefront: [http://localhost:3000/malabar-kitchen](http://localhost:3000/malabar-kitchen)
+- Table QR: [http://localhost:3000/qr/malabar-kitchen/table/4](http://localhost:3000/qr/malabar-kitchen/table/4)
+- Marketplace: [http://localhost:3000/marketplace](http://localhost:3000/marketplace)
+- WhatsApp webhook: `POST /api/webhooks/whatsapp`
+- Payments: `POST /api/webhooks/razorpay`, `POST /api/webhooks/cashfree`
 
-To learn more about Next.js, take a look at the following resources:
+Subdomain routing (same store): `http://malabar-kitchen.localhost:3000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production (Supabase / Postgres)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Point `DATABASE_URL` at Supabase Postgres.
+2. Change `prisma/schema.prisma` `datasource.provider` to `postgresql`.
+3. Run `npx prisma migrate dev`.
+4. Apply `prisma/supabase-rls.sql`.
+5. Set `SESSION_SECRET`, WhatsApp Cloud API, Razorpay/Cashfree webhook secrets, optional Upstash Redis, Uber Direct / Porter keys.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Every tenant query is scoped by `restaurantId` from the staff membership — not from client input alone.
