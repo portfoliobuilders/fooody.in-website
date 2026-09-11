@@ -1,6 +1,9 @@
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
 import { settleOrderMoney } from "../lib/money";
+import { seedBaketreeMenu } from "./data/baketree-menu";
+import { tableQrPath } from "../lib/tenant/host";
+import { generateMenuQr } from "../lib/qr/menu-qr";
 
 const prisma = new PrismaClient();
 const password = "Fooody@2026";
@@ -93,6 +96,40 @@ async function main() {
     },
   });
 
+  const baketreeQr = await generateMenuQr("baketree");
+  const baketree = await prisma.restaurant.create({
+    data: {
+      id: "rst_baketree",
+      slug: "baketree",
+      name: "BakeTree Resto Cafe",
+      tagline: "Burgers, broasted chicken, shawarma & shakes — Palarivattom",
+      city: "Kochi",
+      area: "Palarivattom",
+      address: "43/3906-B, Aiswarya Nagar, Puthiya Road, Palarivattom, Kochi 682025",
+      phone: "9895109707",
+      cuisine: "Cafe, Burgers, Chinese, Arabian, Shakes",
+      gstin: "32AABCT0001B1ZX",
+      upiVpa: "baketree@upi",
+      whatsappPhone: "9895109707",
+      listedOnMarketplace: true,
+      commissionBps: 0,
+      defaultDispatchType: "IN_HOUSE",
+      rating: 4.1,
+      prepTimeMins: 20,
+      brandPrimary: "#1F4D32",
+      brandAccent: "#C4A35A",
+      brandBackground: "#F6EDE0",
+      coverUrl:
+        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1400&q=80",
+      logoUrl:
+        "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=200&q=80",
+      nextOrderNumber: 2040,
+      menuUrl: baketreeQr.menuUrl,
+      menuQrSvg: baketreeQr.menuQrSvg,
+    },
+  });
+
+  const malabarQr = await generateMenuQr("malabar-kitchen");
   const malabar = await prisma.restaurant.create({
     data: {
       id: "rst_malabar",
@@ -116,9 +153,12 @@ async function main() {
       logoUrl:
         "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=200&q=80",
       nextOrderNumber: 1088,
+      menuUrl: malabarQr.menuUrl,
+      menuQrSvg: malabarQr.menuQrSvg,
     },
   });
 
+  const fortQr = await generateMenuQr("fort-cochin-cafe");
   const fort = await prisma.restaurant.create({
     data: {
       id: "rst_fortcochin",
@@ -133,15 +173,121 @@ async function main() {
       listedOnMarketplace: true,
       rating: 4.5,
       prepTimeMins: 20,
+      menuUrl: fortQr.menuUrl,
+      menuQrSvg: fortQr.menuQrSvg,
     },
   });
 
   await prisma.restaurantDomain.createMany({
     data: [
+      { restaurantId: baketree.id, host: "baketree.fooody.in", isPrimary: true },
       { restaurantId: malabar.id, host: "malabar-kitchen.fooody.in", isPrimary: true },
       { restaurantId: fort.id, host: "fort-cochin-cafe.fooody.in", isPrimary: true },
     ],
   });
+  await prisma.operatingHour.createMany({
+    data: [0, 1, 2, 3, 4, 5, 6].map((weekday) => ({
+      restaurantId: baketree.id,
+      weekday,
+      opensAt: "11:00",
+      closesAt: "23:00",
+    })),
+  });
+  await prisma.commissionRule.createMany({
+    data: [
+      { restaurantId: baketree.id, channel: "ONLINE_DELIVERY", commissionBps: 0, platformFeePaise: 0 },
+      { restaurantId: baketree.id, channel: "WHATSAPP", commissionBps: 0, platformFeePaise: 0 },
+      { restaurantId: baketree.id, channel: "DINE_IN", commissionBps: 0, platformFeePaise: 0 },
+      { restaurantId: baketree.id, channel: "TAKEAWAY", commissionBps: 0, platformFeePaise: 0 },
+    ],
+  });
+  await prisma.restaurantMember.createMany({
+    data: [
+      { restaurantId: baketree.id, userId: owner.id, role: "OWNER" },
+      { restaurantId: baketree.id, userId: manager.id, role: "MANAGER" },
+      { restaurantId: baketree.id, userId: kitchen.id, role: "KITCHEN_STAFF" },
+      { restaurantId: baketree.id, userId: cashier.id, role: "BILLING_CASHIER" },
+      { restaurantId: baketree.id, userId: driver.id, role: "DELIVERY_DRIVER" },
+    ],
+  });
+  await seedBaketreeMenu(prisma, baketree.id);
+  const bakeZone = await prisma.diningZone.create({
+    data: { restaurantId: baketree.id, name: "Cafe floor", kind: "INDOOR" },
+  });
+  await Promise.all(
+    ["1", "2", "3", "4", "5", "6", "7", "8"].map((number, i) =>
+      prisma.diningTable.create({
+        data: {
+          restaurantId: baketree.id,
+          zoneId: bakeZone.id,
+          number,
+          seats: i % 2 === 0 ? 2 : 4,
+          qrPath: tableQrPath("baketree", number),
+        },
+      }),
+    ),
+  );
+  await prisma.coupon.create({
+    data: {
+      restaurantId: baketree.id,
+      code: "BAKETREE10",
+      type: "PERCENTAGE",
+      value: 10,
+      minOrderPaise: 20000,
+      maxDiscountPaise: 5000,
+      usageLimitPerUser: 3,
+      channel: "ALL",
+    },
+  });
+  const bakeZinger = await prisma.menuItem.findFirst({
+    where: { restaurantId: baketree.id, title: "Zinger Chicken Sandwich" },
+  });
+  if (bakeZinger) {
+    const subtotal = 12000;
+    const gst = Math.round(subtotal * 0.05);
+    const money = settleOrderMoney({
+      subtotalPaise: subtotal,
+      packagingFeePaise: 1500,
+      gstPaise: gst,
+    });
+    await prisma.order.create({
+      data: {
+        restaurantId: baketree.id,
+        orderNumber: 2041,
+        channel: "TAKEAWAY",
+        status: "PENDING",
+        customerName: "Walk-in · counter",
+        customerPhone: "9895109707",
+        customerNotes: "No mayo",
+        subtotalPaise: subtotal,
+        ...money,
+        items: {
+          create: [
+            {
+              menuItemId: bakeZinger.id,
+              title: bakeZinger.title,
+              quantity: 1,
+              unitPricePaise: 12000,
+              lineTotalPaise: 12000,
+              diet: "NON_VEG",
+            },
+          ],
+        },
+        payment: {
+          create: {
+            restaurantId: baketree.id,
+            gateway: "UPI",
+            status: "PENDING",
+            amountPaise: money.totalPaise,
+          },
+        },
+      },
+    });
+    await prisma.restaurant.update({
+      where: { id: baketree.id },
+      data: { nextOrderNumber: 2041 },
+    });
+  }
   await prisma.operatingHour.createMany({
     data: [0, 1, 2, 3, 4, 5, 6].map((weekday) => ({
       restaurantId: malabar.id,
@@ -681,11 +827,14 @@ async function main() {
     },
   });
 
-  console.log("Seeded Malabar Kitchen + Fort Cochin Cafe");
+  console.log("Seeded BakeTree Resto Cafe + Malabar Kitchen + Fort Cochin Cafe");
   console.log("Login: owner@fooody.in / Fooody@2026");
   console.log("Super admin: admin@fooody.in / Fooody@2026");
   console.log("Driver: driver@fooody.in / Fooody@2026");
   console.log("Phone OTP: 9876543210 / 123456");
+  console.log("BakeTree store: /baketree");
+  console.log("BakeTree kiosk: /baketree/kiosk");
+  console.log("BakeTree QR: /qr/baketree/table/4");
   console.log("QR table: /qr/malabar-kitchen/table/4");
 }
 

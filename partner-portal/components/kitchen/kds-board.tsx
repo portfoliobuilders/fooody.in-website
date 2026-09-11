@@ -131,10 +131,15 @@ export function KdsBoard({ restaurantId }: { restaurantId: string }) {
                           <li key={item.id}>
                             <span className="font-bold">{item.quantity}×</span> {item.title}
                             {item.variantName ? ` (${item.variantName})` : ""}
+                            {item.notes ? ` — ${item.notes}` : ""}
                           </li>
                         ))}
                       </ul>
+                      {order.customerNotes ? <p className="text-sm">Guest: {order.customerNotes}</p> : null}
                       <p className="text-sm font-semibold">{paiseToRupees(order.totalPaise)}</p>
+                      <p className="text-xs text-mist">
+                        {order.payment?.status === "PAID" ? "Paid" : "Collect payment at POS"}
+                      </p>
                       {next && (
                         <Button className="w-full" size="lg" onClick={() => void setStatus(order, next)}>
                           {next === "DISPATCHED" ? "Packaged · dispatch" : `Mark ${ORDER_STATUS_LABEL[next]}`}

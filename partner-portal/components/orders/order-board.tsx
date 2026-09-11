@@ -28,6 +28,7 @@ export type OrderCard = {
   customerName: string;
   customerPhone: string;
   customerNotes: string;
+  deliveryAddress?: string;
   placedAt: string;
   subtotalPaise: number;
   discountPaise: number;
@@ -233,7 +234,11 @@ export function OrderBoard({
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-semibold">{paiseToRupees(order.totalPaise)}</p>
                     <Badge tone={order.payment?.status === "PAID" ? "success" : "warn"}>
-                      {order.payment?.status === "PAID" ? "Paid" : "Cash on delivery"}
+                      {order.payment?.status === "PAID"
+                        ? "Paid"
+                        : order.payment?.status === "CASH_ON_DELIVERY"
+                          ? "Collect cash"
+                          : "Unpaid"}
                     </Badge>
                   </div>
                   {next && (
@@ -260,6 +265,9 @@ export function OrderBoard({
               <p className="text-sm">
                 {selected.customerName} · {selected.customerPhone}
               </p>
+              {selected.deliveryAddress && (
+                <p className="text-sm">Deliver: {selected.deliveryAddress}</p>
+              )}
               {selected.customerNotes && (
                 <p className="rounded-xl bg-amber-50 p-3 text-sm dark:bg-amber-500/10">
                   Note: {selected.customerNotes}
@@ -299,10 +307,74 @@ export function OrderBoard({
                   Track {selected.dispatch.type}
                 </a>
               )}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {suggestedNext(selected.status) && (
                   <Button onClick={() => void setStatus(selected, suggestedNext(selected.status)!)}>Advance</Button>
                 )}
+                {selected.payment?.status !== "PAID" && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      onClick={() =>
+                        void fetch(`/api/tenant/${restaurantId}/orders/${selected.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ collectPayment: "UPI" }),
+                        }).then(() => {
+                          toast.success("Marked paid");
+                          void load();
+                        })
+                      }
+                    >
+                      Collect UPI
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() =>
+                        void fetch(`/api/tenant/${restaurantId}/orders/${selected.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ collectPayment: "CASH" }),
+                        }).then(() => {
+                          toast.success("Cash collected");
+                          void load();
+                        })
+                      }
+                    >
+                      Collect cash
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        void fetch(`/api/tenant/${restaurantId}/orders/${selected.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ collectPayment: "CARD" }),
+                        }).then(() => {
+                          toast.success("Card collected");
+                          void load();
+                        })
+                      }
+                    >
+                      Collect card
+                    </Button>
+                  </>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    void fetch(`/api/tenant/${restaurantId}/orders/${selected.id}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ printBill: true }),
+                    }).then(() => {
+                      toast.success("Bill marked printed");
+                      void load();
+                    })
+                  }
+                >
+                  Print bill
+                </Button>
                 {selected.status === "PENDING" && (
                   <Button variant="danger" onClick={() => void setStatus(selected, "CANCELLED")}>
                     Cancel

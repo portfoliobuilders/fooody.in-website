@@ -7,7 +7,7 @@ Multi-tenant restaurant OS for **fooody.in**: partner POS/KDS + branded storefro
 ```bash
 cd partner-portal
 npm install
-npx prisma db push --force-reset
+npx prisma db push
 npx prisma db seed
 npm run dev
 ```
@@ -25,13 +25,17 @@ Open [http://localhost:3000/login](http://localhost:3000/login)
 
 Phone OTP demo: `9876543210` / `123456`
 
-- Storefront: [http://localhost:3000/malabar-kitchen](http://localhost:3000/malabar-kitchen)
-- Table QR: [http://localhost:3000/qr/malabar-kitchen/table/4](http://localhost:3000/qr/malabar-kitchen/table/4)
+- Storefront: [http://localhost:3000/baketree](http://localhost:3000/baketree)
+- Counter kiosk: [http://localhost:3000/baketree/kiosk](http://localhost:3000/baketree/kiosk)
+- Table QR: [http://localhost:3000/qr/baketree/table/4](http://localhost:3000/qr/baketree/table/4)
 - Marketplace: [http://localhost:3000/marketplace](http://localhost:3000/marketplace)
+- Register a kitchen: [http://localhost:3000/partners/register](http://localhost:3000/partners/register)
 - WhatsApp webhook: `POST /api/webhooks/whatsapp`
 - Payments: `POST /api/webhooks/razorpay`, `POST /api/webhooks/cashfree`
 
-Subdomain routing (same store): `http://malabar-kitchen.localhost:3000`
+Subdomain routing (same store): `http://baketree.localhost:3000`
+
+BakeTree is the first live tenant. Creating any kitchen (`/partners/register` or seed) lists it on the Fooody marketplace automatically. The restaurant can change menu, hours, UPI, WhatsApp and listing later under **Store**.
 
 ## Production (Supabase / Postgres)
 

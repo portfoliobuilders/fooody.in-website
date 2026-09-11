@@ -18,6 +18,7 @@ import {
   Sun,
   LogOut,
   Store,
+  Settings,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { StaffRole } from "@prisma/client";
@@ -43,6 +44,7 @@ const NAV: {
   { href: "/promotions", label: "Promotions", icon: TicketPercent, roles: ["SUPER_ADMIN", "OWNER", "MANAGER"] },
   { href: "/ads", label: "Ad engine", icon: Megaphone, roles: ["SUPER_ADMIN", "OWNER", "MANAGER"] },
   { href: "/staff", label: "Staff", icon: Users, roles: ["SUPER_ADMIN", "OWNER"] },
+  { href: "/settings", label: "Store", icon: Settings, roles: ["SUPER_ADMIN", "OWNER", "MANAGER"] },
 ];
 
 export function DashboardShell({

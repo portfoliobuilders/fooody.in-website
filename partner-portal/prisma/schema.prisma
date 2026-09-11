@@ -212,6 +212,14 @@ model Restaurant {
   defaultDispatchType DispatchType @default(IN_HOUSE)
   logoUrl             String?
   coverUrl            String?
+  whatsappPhone       String?
+  brandPrimary        String   @default("#111827")
+  brandAccent         String   @default("#ef4444")
+  brandBackground     String   @default("#f6f1e8")
+  /// Canonical customer menu URL encoded into menuQrSvg
+  menuUrl             String?
+  /// Print-ready SVG (quiet zone + high error correction). Scales for table tents.
+  menuQrSvg           String?
   nextOrderNumber     Int      @default(1040)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

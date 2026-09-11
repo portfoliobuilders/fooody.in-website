@@ -35,9 +35,10 @@ export async function getPublicCatalog(slug: string) {
       items: {
         where: { listedOnStorefront: true },
         include: itemInclude,
-        orderBy: { sortOrder: "asc" },
+        orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
       },
-      tables: true,
+      tables: { select: { number: true, seats: true, status: true } },
+      hours: { orderBy: { weekday: "asc" } },
     },
   });
   return restaurant;

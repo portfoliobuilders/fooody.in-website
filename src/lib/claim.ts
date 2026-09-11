@@ -19,6 +19,7 @@ export const RESERVED_SLUGS = new Set([
 
 export const TAKEN_SLUGS = new Set([
   "paragon",
+  "baketree",
   "kfc",
   "mcdonalds",
   "burger-king",
