@@ -44,9 +44,18 @@ const NEXT: Partial<Record<OrderStatus, OrderStatus>> = {
   READY: "DISPATCHED",
 };
 
+const CHANNEL_FILTERS: Array<"ALL" | "DINE_IN" | "ONLINE_DELIVERY" | "TAKEAWAY" | "WHATSAPP"> = [
+  "ALL",
+  "DINE_IN",
+  "ONLINE_DELIVERY",
+  "TAKEAWAY",
+  "WHATSAPP",
+];
+
 export function KdsBoard({ restaurantId }: { restaurantId: string }) {
   const [orders, setOrders] = useState<OrderCard[]>([]);
   const [live, setLive] = useState(false);
+  const [channel, setChannel] = useState<(typeof CHANNEL_FILTERS)[number]>("ALL");
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/tenant/${restaurantId}/orders`);
@@ -74,14 +83,20 @@ export function KdsBoard({ restaurantId }: { restaurantId: string }) {
     return () => source.close();
   }, [restaurantId, load]);
 
-  const grouped = useMemo(
-    () =>
-      COLUMNS.map((column) => ({
-        ...column,
-        tickets: orders.filter((order) => column.statuses.includes(order.status)),
-      })),
-    [orders],
-  );
+  const grouped = useMemo(() => {
+    const scoped =
+      channel === "ALL"
+        ? orders
+        : orders.filter((order) =>
+            channel === "ONLINE_DELIVERY"
+              ? order.channel === "ONLINE_DELIVERY" || order.channel === "SELF_DELIVERY" || order.channel === "WHATSAPP"
+              : order.channel === channel,
+          );
+    return COLUMNS.map((column) => ({
+      ...column,
+      tickets: scoped.filter((order) => column.statuses.includes(order.status)),
+    }));
+  }, [orders, channel]);
 
   async function setStatus(order: OrderCard, status: OrderStatus) {
     const res = await fetch(`/api/tenant/${restaurantId}/orders/${order.id}`, {
@@ -99,9 +114,19 @@ export function KdsBoard({ restaurantId }: { restaurantId: string }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span className={`size-2 rounded-full ${live ? "bg-emerald-500" : "bg-mist"}`} />
         <p className="text-sm text-mist">{live ? "KDS live" : "Reconnecting…"}</p>
+        {CHANNEL_FILTERS.map((value) => (
+          <Button
+            key={value}
+            size="sm"
+            variant={channel === value ? "default" : "outline"}
+            onClick={() => setChannel(value)}
+          >
+            {value === "ALL" ? "All channels" : value === "ONLINE_DELIVERY" ? "Online" : CHANNEL_LABEL[value]}
+          </Button>
+        ))}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {grouped.map((column) => (

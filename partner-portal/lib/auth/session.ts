@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import type { StaffRole } from "@prisma/client";
 
 export const SESSION_COOKIE = "fooody_session";
@@ -52,9 +52,16 @@ export async function readSessionToken(token: string): Promise<SessionUser | nul
 
 export async function getSession(): Promise<SessionUser | null> {
   const jar = await cookies();
-  const token = jar.get(SESSION_COOKIE)?.value;
-  if (!token) return null;
-  return readSessionToken(token);
+  const cookieToken = jar.get(SESSION_COOKIE)?.value;
+  if (cookieToken) {
+    const user = await readSessionToken(cookieToken);
+    if (user) return user;
+  }
+  const auth = (await headers()).get("authorization");
+  if (auth?.toLowerCase().startsWith("bearer ")) {
+    return readSessionToken(auth.slice(7).trim());
+  }
+  return null;
 }
 
 export async function setSessionCookie(user: SessionUser) {
@@ -67,6 +74,7 @@ export async function setSessionCookie(user: SessionUser) {
     path: "/",
     maxAge: 60 * 60 * 24 * 14,
   });
+  return token;
 }
 
 export async function clearSessionCookie() {

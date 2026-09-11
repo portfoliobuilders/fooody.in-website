@@ -12,6 +12,9 @@ export default async function InventoryPage({
     <div className="space-y-4">
       <h1 className="font-display text-3xl font-extrabold">Inventory & recipes</h1>
       <p className="text-mist">Stock deducts the moment a ticket is accepted, using recipe mapping.</p>
+      <a className="text-sm font-semibold text-flame" href={`/dashboard/${restaurant_id}/inventory/requisitions`}>
+        Raise a branch transfer or purchase request →
+      </a>
       <InventoryBoard restaurantId={restaurant_id} />
     </div>
   );

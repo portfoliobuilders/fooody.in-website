@@ -52,6 +52,7 @@ export async function dispatchOrder(orderId: string, typeOverride?: DispatchType
 
   const type = resolveType(order.channel, typeOverride ?? order.restaurant.defaultDispatchType);
   const result = await providers[type].create(toRequest(order));
+  const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
 
   const dispatch = await prisma.deliveryDispatch.upsert({
     where: { orderId: order.id },
@@ -62,6 +63,7 @@ export async function dispatchOrder(orderId: string, typeOverride?: DispatchType
       providerJobId: result.providerJobId,
       providerQuotePaise: result.providerQuotePaise,
       assignedAt: new Date(),
+      deliveryOtp,
       metadataJson: (result.metadata ?? {}) as Prisma.InputJsonValue,
     },
     create: {
@@ -73,6 +75,7 @@ export async function dispatchOrder(orderId: string, typeOverride?: DispatchType
       providerJobId: result.providerJobId,
       providerQuotePaise: result.providerQuotePaise,
       assignedAt: new Date(),
+      deliveryOtp,
       metadataJson: (result.metadata ?? {}) as Prisma.InputJsonValue,
     },
   });

@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   ConciergeBell,
   ChefHat,
+  MonitorSmartphone,
   UtensilsCrossed,
   Armchair,
   CalendarDays,
@@ -18,6 +19,7 @@ import {
   Sun,
   LogOut,
   Store,
+  ArrowLeftRight,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { StaffRole } from "@prisma/client";
@@ -34,12 +36,14 @@ const NAV: {
 }[] = [
   { href: "", label: "Overview", icon: LayoutDashboard, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "KITCHEN_STAFF", "BILLING_CASHIER", "DELIVERY_DRIVER"] },
   { href: "/orders", label: "Orders", icon: ConciergeBell, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "KITCHEN_STAFF", "BILLING_CASHIER", "DELIVERY_DRIVER"] },
+  { href: "/pos", label: "POS", icon: MonitorSmartphone, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "BILLING_CASHIER"] },
   { href: "/kitchen", label: "Kitchen", icon: ChefHat, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "KITCHEN_STAFF"] },
   { href: "/menu", label: "Menu", icon: UtensilsCrossed, roles: ["SUPER_ADMIN", "OWNER", "MANAGER"] },
   { href: "/tables", label: "Tables", icon: Armchair, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "BILLING_CASHIER"] },
   { href: "/reservations", label: "Reservations", icon: CalendarDays, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "BILLING_CASHIER"] },
   { href: "/payments", label: "Payments", icon: Wallet, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "BILLING_CASHIER"] },
   { href: "/inventory", label: "Inventory", icon: Boxes, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "KITCHEN_STAFF"] },
+  { href: "/inventory/requisitions", label: "Requisitions", icon: ArrowLeftRight, roles: ["SUPER_ADMIN", "OWNER", "MANAGER", "KITCHEN_STAFF"] },
   { href: "/promotions", label: "Promotions", icon: TicketPercent, roles: ["SUPER_ADMIN", "OWNER", "MANAGER"] },
   { href: "/ads", label: "Ad engine", icon: Megaphone, roles: ["SUPER_ADMIN", "OWNER", "MANAGER"] },
   { href: "/staff", label: "Staff", icon: Users, roles: ["SUPER_ADMIN", "OWNER"] },

@@ -1,7 +1,7 @@
 import {
   type FulfillmentChannel,
-  type InventoryMoveReason,
   type OrderStatus,
+  type PaymentGateway,
   type Prisma,
   type TableStatus,
 } from "@prisma/client";
@@ -10,10 +10,11 @@ import { settleOrderMoney, gstFromBps } from "@/lib/money";
 import { publishTenantEvent } from "@/lib/realtime/order-bus";
 import { dispatchOrder, isDeliveryChannel } from "@/lib/dispatch";
 import { notifyCustomerStatus } from "@/lib/notify/customer";
+import { applyRecipeInventoryDelta } from "@/lib/inventory/sop-deduction";
 
 const orderInclude = {
   items: true,
-  payment: true,
+  payment: { include: { tenders: true } },
   table: true,
   dispatch: true,
 } satisfies Prisma.OrderInclude;
@@ -54,38 +55,6 @@ export function suggestedNext(status: OrderStatus) {
   return NEXT_STATUS[status] ?? null;
 }
 
-async function applyRecipeDelta(
-  tx: Prisma.TransactionClient,
-  restaurantId: string,
-  orderId: string,
-  items: { menuItemId: string | null; quantity: number }[],
-  reason: InventoryMoveReason,
-  multiplier: 1 | -1,
-) {
-  for (const line of items) {
-    if (!line.menuItemId) continue;
-    const recipes = await tx.recipeLine.findMany({
-      where: { menuItemId: line.menuItemId },
-    });
-    for (const recipe of recipes) {
-      const qty = recipe.qtyPerPortion * line.quantity * multiplier;
-      await tx.inventoryItem.update({
-        where: { id: recipe.inventoryItemId },
-        data: { onHand: { increment: qty } },
-      });
-      await tx.inventoryMovement.create({
-        data: {
-          restaurantId,
-          inventoryItemId: recipe.inventoryItemId,
-          orderId,
-          qty,
-          reason,
-        },
-      });
-    }
-  }
-}
-
 export async function transitionOrder(
   restaurantId: string,
   orderId: string,
@@ -100,7 +69,7 @@ export async function transitionOrder(
 
   const updated = await prisma.$transaction(async (tx) => {
     if (status === "ACCEPTED" && !existing.inventoryDeducted) {
-      await applyRecipeDelta(
+      await applyRecipeInventoryDelta(
         tx,
         restaurantId,
         existing.id,
@@ -110,7 +79,7 @@ export async function transitionOrder(
       );
     }
     if (status === "CANCELLED" && existing.inventoryDeducted) {
-      await applyRecipeDelta(
+      await applyRecipeInventoryDelta(
         tx,
         restaurantId,
         existing.id,
@@ -229,8 +198,9 @@ export async function createOrder(input: {
   deliveryAddress?: string;
   tableNumber?: string;
   couponCode?: string;
-  paymentGateway?: "RAZORPAY" | "CASHFREE" | "STRIPE" | "UPI" | "CASH";
+  paymentGateway?: "RAZORPAY" | "CASHFREE" | "STRIPE" | "UPI" | "CASH" | "CARD";
   paymentStatus?: "PAID" | "CASH_ON_DELIVERY" | "PENDING";
+  tenders?: { gateway: PaymentGateway; amountPaise: number; reference?: string }[];
   lines: IncomingLine[];
   marketplace?: boolean;
 }) {
@@ -327,8 +297,14 @@ export async function createOrder(input: {
     deliveryFeePaise,
     platformFeePaise,
     gstPaise,
-    gatewayFeePaise: input.paymentStatus === "PAID" ? Math.round(subtotalPaise * 0.018) : 0,
+    gatewayFeePaise: input.paymentStatus === "PAID" && !input.tenders?.length ? Math.round(subtotalPaise * 0.018) : 0,
   });
+  if (input.tenders?.length) {
+    const splitTotal = input.tenders.reduce((sum, row) => sum + row.amountPaise, 0);
+    if (splitTotal !== money.totalPaise) {
+      throw new Error("Split tenders must add up to the bill total");
+    }
+  }
 
   const order = await prisma.$transaction(async (tx) => {
     const updatedRestaurant = await tx.restaurant.update({
@@ -374,11 +350,23 @@ export async function createOrder(input: {
         payment: {
           create: {
             restaurantId: input.restaurantId,
-            gateway: input.paymentGateway ?? (input.channel === "DINE_IN" ? "UPI" : "RAZORPAY"),
+            gateway:
+              input.tenders?.[0]?.gateway ??
+              input.paymentGateway ??
+              (input.channel === "DINE_IN" ? "UPI" : "RAZORPAY"),
             status: input.paymentStatus ?? "PAID",
             amountPaise: money.totalPaise,
             reference: input.paymentStatus === "CASH_ON_DELIVERY" ? null : `pay_${Date.now()}`,
             settled: input.paymentStatus === "PAID",
+            tenders: input.tenders?.length
+              ? {
+                  create: input.tenders.map((tender) => ({
+                    gateway: tender.gateway,
+                    amountPaise: tender.amountPaise,
+                    reference: tender.reference,
+                  })),
+                }
+              : undefined,
           },
         },
       },

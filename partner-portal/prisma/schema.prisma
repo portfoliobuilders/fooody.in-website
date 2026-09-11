@@ -120,6 +120,36 @@ enum InventoryMoveReason {
   MANUAL_ADJUST
   WASTAGE
   RECEIVING
+  BRANCH_TRANSFER_OUT
+  BRANCH_TRANSFER_IN
+}
+
+enum RequisitionStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  DISPATCHED
+  FULFILLED
+  CANCELLED
+}
+
+enum RequisitionType {
+  PURCHASE_ORDER
+  BRANCH_TRANSFER
+}
+
+enum DriverShiftStatus {
+  OFFLINE
+  AVAILABLE
+  ON_DELIVERY
+  BREAK
+}
+
+enum InventoryAlertType {
+  LOW_STOCK
+  OUT_OF_STOCK
+  SPOILAGE
 }
 
 enum DispatchType {
@@ -167,10 +197,13 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  memberships   RestaurantMember[]
-  otpChallenges OtpChallenge[]
-  couponUses    CouponRedemption[]
-  dispatches    DeliveryDispatch[] @relation("AssignedDriver")
+  memberships             RestaurantMember[]
+  otpChallenges           OtpChallenge[]
+  couponUses              CouponRedemption[]
+  dispatches              DeliveryDispatch[] @relation("AssignedDriver")
+  riderProfile            RiderProfile?
+  requestedRequisitions   InventoryRequisition[] @relation("RequestedByUser")
+  approvedRequisitions    InventoryRequisition[] @relation("ApprovedByUser")
 }
 
 model OtpChallenge {
@@ -213,28 +246,43 @@ model Restaurant {
   logoUrl             String?
   coverUrl            String?
   nextOrderNumber     Int      @default(1040)
+  organizationId      String?
+  organization        BranchOrganization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  members          RestaurantMember[]
-  domains          RestaurantDomain[]
-  hours            OperatingHour[]
-  commissionRules  CommissionRule[]
-  categories       MenuCategory[]
-  items            MenuItem[]
-  modifierGroups   ModifierGroup[]
-  orders           Order[]
-  payments         Payment[]
-  zones            DiningZone[]
-  tables           DiningTable[]
-  tableSessions    TableSession[]
-  reservations     Reservation[]
-  inventoryItems   InventoryItem[]
-  inventoryMoves   InventoryMovement[]
-  coupons          Coupon[]
-  campaigns        AdCampaign[]
-  dispatches       DeliveryDispatch[]
-  whatsappSessions WhatsAppCartSession[]
+  members                 RestaurantMember[]
+  domains                 RestaurantDomain[]
+  hours                   OperatingHour[]
+  commissionRules         CommissionRule[]
+  categories              MenuCategory[]
+  items                   MenuItem[]
+  modifierGroups          ModifierGroup[]
+  orders                  Order[]
+  payments                Payment[]
+  zones                   DiningZone[]
+  tables                  DiningTable[]
+  tableSessions           TableSession[]
+  reservations            Reservation[]
+  inventoryItems          InventoryItem[]
+  inventoryMoves          InventoryMovement[]
+  inventoryAlerts         InventoryAlert[]
+  coupons                 Coupon[]
+  campaigns               AdCampaign[]
+  dispatches              DeliveryDispatch[]
+  whatsappSessions        WhatsAppCartSession[]
+  requestingRequisitions  InventoryRequisition[] @relation("RequestingBranch")
+  fulfillingRequisitions  InventoryRequisition[] @relation("FulfillingBranch")
+
+  @@index([organizationId])
+}
+
+model BranchOrganization {
+  id          String       @id @default(cuid())
+  name        String
+  restaurants Restaurant[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 /// [slug].fooody.in or a verified custom host
@@ -395,8 +443,11 @@ model InventoryItem {
   lowStockAt   Float
   recipeLines  RecipeLine[]
   movements    InventoryMovement[]
+  alerts       InventoryAlert[]
+  requisitionLines RequisitionLine[]
 
   @@index([restaurantId])
+  @@index([restaurantId, name])
 }
 
 model RecipeLine {
@@ -426,6 +477,77 @@ model InventoryMovement {
   @@index([restaurantId, createdAt])
   @@index([orderId])
   @@index([inventoryItemId])
+}
+
+model InventoryAlert {
+  id              String             @id @default(cuid())
+  restaurantId    String
+  restaurant      Restaurant         @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  inventoryItemId String
+  inventoryItem   InventoryItem      @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
+  alertType       InventoryAlertType @default(LOW_STOCK)
+  message         String
+  acknowledged    Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+
+  @@index([restaurantId, acknowledged])
+  @@index([inventoryItemId])
+}
+
+model InventoryRequisition {
+  id                 String            @id @default(cuid())
+  requisitionNumber  String            @unique
+  requestingBranchId String
+  fulfillingBranchId String?
+  requestedById      String
+  approvedById       String?
+  type               RequisitionType   @default(BRANCH_TRANSFER)
+  status             RequisitionStatus @default(PENDING_APPROVAL)
+  notes              String?
+  dispatchedAt       DateTime?
+  receivedAt         DateTime?
+  lines              RequisitionLine[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  requestingBranch Restaurant  @relation("RequestingBranch", fields: [requestingBranchId], references: [id], onDelete: Cascade)
+  fulfillingBranch Restaurant? @relation("FulfillingBranch", fields: [fulfillingBranchId], references: [id], onDelete: SetNull)
+  requestedBy      User        @relation("RequestedByUser", fields: [requestedById], references: [id])
+  approvedBy       User?       @relation("ApprovedByUser", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  @@index([requestingBranchId, status])
+  @@index([fulfillingBranchId])
+}
+
+model RequisitionLine {
+  id                 String               @id @default(cuid())
+  requisitionId      String
+  inventoryItemId    String
+  quantity           Float
+  unit               String
+  fulfilledQty       Float                @default(0)
+  sourceInventoryId  String?
+
+  requisition   InventoryRequisition @relation(fields: [requisitionId], references: [id], onDelete: Cascade)
+  inventoryItem InventoryItem        @relation(fields: [inventoryItemId], references: [id])
+
+  @@index([requisitionId])
+  @@index([inventoryItemId])
+}
+
+model RiderProfile {
+  id            String            @id @default(cuid())
+  userId        String            @unique
+  currentLat    Float?
+  currentLng    Float?
+  shiftStatus   DriverShiftStatus @default(OFFLINE)
+  vehicleType   String?
+  vehicleNumber String?
+  activeOrderId String?           @unique
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dispatches    DeliveryDispatch[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 }
 
 // ---------------------------------------------------------------------------
@@ -575,12 +697,25 @@ model Payment {
   amountPaise  Int
   reference    String?
   settled      Boolean        @default(false)
+  tenders      PaymentTender[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @default(now()) @updatedAt
 
   @@index([restaurantId, createdAt])
   @@index([restaurantId, gateway])
   @@index([reference])
+}
+
+model PaymentTender {
+  id          String         @id @default(cuid())
+  paymentId   String
+  payment     Payment        @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  gateway     PaymentGateway
+  amountPaise Int
+  reference   String?
+  createdAt   DateTime       @default(now())
+
+  @@index([paymentId])
 }
 
 // ---------------------------------------------------------------------------
@@ -597,12 +732,16 @@ model DeliveryDispatch {
   status             DispatchStatus @default(QUOTED)
   driverUserId       String?
   driver             User?          @relation("AssignedDriver", fields: [driverUserId], references: [id], onDelete: SetNull)
+  riderProfileId     String?
+  riderProfile       RiderProfile?  @relation(fields: [riderProfileId], references: [id], onDelete: SetNull)
   trackingUrl        String?
   providerJobId      String?
   providerQuotePaise Int?
+  deliveryOtp        String?
   customerNotifiedAt DateTime?
   assignedAt         DateTime?
   pickedUpAt         DateTime?
+  arrivedAt          DateTime?
   deliveredAt        DateTime?
   metadataJson       Json?
   createdAt          DateTime       @default(now())
@@ -610,6 +749,7 @@ model DeliveryDispatch {
 
   @@index([restaurantId, status])
   @@index([driverUserId])
+  @@index([riderProfileId])
 }
 
 // ---------------------------------------------------------------------------

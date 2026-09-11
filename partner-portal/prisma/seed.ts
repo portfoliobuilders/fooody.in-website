@@ -6,10 +6,15 @@ const prisma = new PrismaClient();
 const password = "Fooody@2026";
 
 async function main() {
+  await prisma.paymentTender.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.payment.deleteMany();
   await prisma.deliveryDispatch.deleteMany();
   await prisma.inventoryMovement.deleteMany();
+  await prisma.inventoryAlert.deleteMany();
+  await prisma.requisitionLine.deleteMany();
+  await prisma.inventoryRequisition.deleteMany();
+  await prisma.riderProfile.deleteMany();
   await prisma.whatsAppCartSession.deleteMany();
   await prisma.tableSession.deleteMany();
   await prisma.order.deleteMany();
@@ -33,6 +38,7 @@ async function main() {
   await prisma.restaurantMember.deleteMany();
   await prisma.otpChallenge.deleteMany();
   await prisma.restaurant.deleteMany();
+  await prisma.branchOrganization.deleteMany();
   await prisma.user.deleteMany();
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -93,6 +99,10 @@ async function main() {
     },
   });
 
+  const kochiGroup = await prisma.branchOrganization.create({
+    data: { id: "org_kochi", name: "Fooody Kochi Group" },
+  });
+
   const malabar = await prisma.restaurant.create({
     data: {
       id: "rst_malabar",
@@ -116,6 +126,7 @@ async function main() {
       logoUrl:
         "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=200&q=80",
       nextOrderNumber: 1088,
+      organizationId: kochiGroup.id,
     },
   });
 
@@ -133,6 +144,7 @@ async function main() {
       listedOnMarketplace: true,
       rating: 4.5,
       prepTimeMins: 20,
+      organizationId: kochiGroup.id,
     },
   });
 
@@ -678,6 +690,27 @@ async function main() {
       diet: "EGG",
       imageUrl:
         "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1200&q=80",
+    },
+  });
+  await prisma.restaurantMember.createMany({
+    data: [
+      { restaurantId: fort.id, userId: owner.id, role: "OWNER" },
+      { restaurantId: fort.id, userId: manager.id, role: "MANAGER" },
+      { restaurantId: fort.id, userId: kitchen.id, role: "KITCHEN_STAFF" },
+    ],
+  });
+  await prisma.inventoryItem.createMany({
+    data: [
+      { restaurantId: fort.id, name: "Kaima rice", unit: "KG", onHand: 28, lowStockAt: 8 },
+      { restaurantId: fort.id, name: "Chicken", unit: "KG", onHand: 22, lowStockAt: 6 },
+    ],
+  });
+  await prisma.riderProfile.create({
+    data: {
+      userId: driver.id,
+      shiftStatus: "AVAILABLE",
+      vehicleType: "BIKE",
+      vehicleNumber: "KL-07-AB-4421",
     },
   });
 

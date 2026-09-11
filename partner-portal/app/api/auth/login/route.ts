@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     if (!ok) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
-    await setSessionCookie({
+    const token = await setSessionCookie({
       userId: user.id,
       name: user.name,
       email: user.email,
@@ -32,7 +32,8 @@ export async function POST(request: Request) {
       include: { restaurant: true },
     });
     return NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email },
+      token,
+      user: { id: user.id, name: user.name, email: user.email, phone: user.phone },
       memberships,
     });
   } catch (error) {

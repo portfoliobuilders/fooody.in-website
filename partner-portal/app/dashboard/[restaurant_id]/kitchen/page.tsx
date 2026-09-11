@@ -11,7 +11,7 @@ export default async function KitchenPage({
   return (
     <div className="space-y-4">
       <h1 className="font-display text-3xl font-extrabold">Kitchen display</h1>
-      <p className="text-mist">New → In kitchen → Ready. Packaging a delivery ticket fires dispatch automatically.</p>
+      <p className="text-mist">Filter by dine-in, online, or takeaway. Accepting a ticket deducts recipe stock.</p>
       <KdsBoard restaurantId={restaurant_id} />
     </div>
   );

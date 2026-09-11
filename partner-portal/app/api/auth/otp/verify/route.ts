@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         data: { id: `usr_${crypto.randomUUID().slice(0, 8)}`, phone, name: "Partner" },
       });
     }
-    await setSessionCookie({
+    const token = await setSessionCookie({
       userId: user.id,
       name: user.name,
       email: user.email,
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       where: { userId: user.id },
       include: { restaurant: true },
     });
-    return NextResponse.json({ user, memberships });
+    return NextResponse.json({ token, user, memberships });
   } catch (error) {
     return jsonError(error);
   }

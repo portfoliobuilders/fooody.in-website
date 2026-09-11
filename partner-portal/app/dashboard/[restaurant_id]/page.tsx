@@ -63,8 +63,14 @@ export default async function OverviewPage({
         </Card>
       </div>
       <div className="flex flex-wrap gap-2">
+        <Link className="rounded-full bg-gradient-to-br from-flame to-ember px-4 py-2 text-sm font-semibold text-white" href={`/dashboard/${restaurant_id}/pos`}>
+          Open counter POS
+        </Link>
         <Link className="rounded-full bg-gradient-to-br from-flame to-ember px-4 py-2 text-sm font-semibold text-white" href={`/dashboard/${restaurant_id}/orders`}>
           Open order hub
+        </Link>
+        <Link className="rounded-full border border-black/10 px-4 py-2 text-sm dark:border-white/10" href={`/dashboard/${restaurant_id}/inventory/requisitions`}>
+          Stock requisitions
         </Link>
         <Link className="rounded-full border border-black/10 px-4 py-2 text-sm dark:border-white/10" href={`/${restaurant?.slug}`}>
           View branded storefront

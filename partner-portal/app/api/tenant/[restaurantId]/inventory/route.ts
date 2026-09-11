@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { jsonError, requireMembership, KITCHEN_ROLES, MENU_ROLES } from "@/lib/auth/rbac";
-import { listInventory, mapRecipe, upsertInventory } from "@/lib/db/inventory";
+import { listInventory, mapRecipe, recordWaste, upsertInventory } from "@/lib/db/inventory";
 
 type Params = { params: Promise<{ restaurantId: string }> };
 
@@ -22,6 +22,11 @@ export async function POST(request: Request, { params }: Params) {
     if (body.kind === "recipe") {
       return NextResponse.json({
         line: await mapRecipe(restaurantId, body.menuItemId, body.inventoryItemId, Number(body.qtyPerPortion)),
+      });
+    }
+    if (body.kind === "waste") {
+      return NextResponse.json({
+        item: await recordWaste(restaurantId, body.inventoryItemId, Number(body.qty), body.note ?? ""),
       });
     }
     return NextResponse.json({ item: await upsertInventory(restaurantId, body) });

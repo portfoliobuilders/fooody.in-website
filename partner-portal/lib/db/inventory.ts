@@ -43,6 +43,46 @@ export async function upsertInventory(
   return item;
 }
 
+export async function recordWaste(
+  restaurantId: string,
+  inventoryItemId: string,
+  qty: number,
+  note = "",
+) {
+  const item = await prisma.inventoryItem.findFirst({
+    where: { id: inventoryItemId, restaurantId },
+  });
+  if (!item) throw new Error("Ingredient not found");
+  const updated = await prisma.$transaction(async (tx) => {
+    const next = await tx.inventoryItem.update({
+      where: { id: item.id },
+      data: { onHand: { decrement: qty } },
+    });
+    await tx.inventoryMovement.create({
+      data: {
+        restaurantId,
+        inventoryItemId: item.id,
+        qty: -qty,
+        reason: "WASTAGE",
+        note,
+      },
+    });
+    if (Number(next.onHand) <= Number(next.lowStockAt)) {
+      await tx.inventoryAlert.create({
+        data: {
+          restaurantId,
+          inventoryItemId: item.id,
+          alertType: Number(next.onHand) <= 0 ? "OUT_OF_STOCK" : "LOW_STOCK",
+          message: `Wastage logged: ${item.name} now ${next.onHand} ${item.unit}.`,
+        },
+      });
+    }
+    return next;
+  });
+  publishTenantEvent(restaurantId, { type: "inventory.updated" });
+  return updated;
+}
+
 export async function mapRecipe(
   restaurantId: string,
   menuItemId: string,
