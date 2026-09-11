@@ -30,7 +30,8 @@ async function loadSession(waId: string, name: string): Promise<Session> {
   const restaurant =
     (row
       ? await prisma.restaurant.findUnique({ where: { id: row.restaurantId } })
-      : await prisma.restaurant.findFirst({ where: { listedOnMarketplace: true } })) ??
+      : await prisma.restaurant.findUnique({ where: { slug: process.env.WHATSAPP_RESTAURANT_SLUG ?? "baketree" } })) ??
+    (await prisma.restaurant.findFirst({ where: { listedOnMarketplace: true } })) ??
     (await prisma.restaurant.findFirst());
   if (!restaurant) throw new Error("No restaurant configured for WhatsApp");
   const session: Session = {

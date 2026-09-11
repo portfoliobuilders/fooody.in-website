@@ -1,14 +1,16 @@
 export const STATIC_RESTAURANT_IDS = [
+  { restaurant_id: "rst_baketree" },
   { restaurant_id: "rst_malabar" },
   { restaurant_id: "rst_fortcochin" },
 ];
 
 export const STATIC_SLUGS = [
+  { restaurant_slug: "baketree" },
   { restaurant_slug: "malabar-kitchen" },
   { restaurant_slug: "fort-cochin-cafe" },
 ];
 
-export const STATIC_TABLES = ["1", "2", "4", "8", "11", "12"];
+export const STATIC_TABLES = ["1", "2", "3", "4", "5", "6", "7", "8", "11", "12"];
 
 export function staticSlugTableParams() {
   return STATIC_SLUGS.flatMap(({ restaurant_slug }) =>

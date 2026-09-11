@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Storefront } from "@/components/storefront/storefront";
-import { RESERVED_SLUGS } from "@/lib/tenant/host";
 import { prisma } from "@/lib/db/prisma";
 
 export async function generateMetadata({
@@ -11,23 +10,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { restaurant_slug } = await params;
   const restaurant = await prisma.restaurant.findUnique({ where: { slug: restaurant_slug } });
-  if (!restaurant) return { title: "Restaurant" };
-  return {
-    title: `${restaurant.name} | Order online`,
-    description:
-      restaurant.tagline ||
-      `Order from ${restaurant.name} in ${restaurant.city}. Dine-in, takeaway, delivery, table QR and WhatsApp.`,
-  };
+  return { title: restaurant ? `${restaurant.name} kiosk` : "Order kiosk" };
 }
 
-export default async function RestaurantStorePage({
+export default async function KioskPage({
   params,
 }: {
   params: Promise<{ restaurant_slug: string }>;
 }) {
   const { restaurant_slug } = await params;
-  if (RESERVED_SLUGS.has(restaurant_slug)) notFound();
   const exists = await prisma.restaurant.findUnique({ where: { slug: restaurant_slug } });
   if (!exists) notFound();
-  return <Storefront slug={restaurant_slug} />;
+  return <Storefront slug={restaurant_slug} kiosk />;
 }

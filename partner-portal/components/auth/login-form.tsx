@@ -115,6 +115,9 @@ export function LoginForm() {
           <p className="text-xs text-mist">
             Demo: owner@fooody.in / Fooody@2026 · kitchen@fooody.in · cashier@fooody.in · phone 9876543210 / 123456
           </p>
+          <a className="block text-xs text-gold underline" href="/partners/register">
+            Register a new kitchen
+          </a>
         </CardContent>
       </Card>
     </div>

@@ -9,7 +9,7 @@ import { prisma } from "@/lib/db/prisma";
 import { settleOrderMoney, gstFromBps } from "@/lib/money";
 import { publishTenantEvent } from "@/lib/realtime/order-bus";
 import { dispatchOrder, isDeliveryChannel } from "@/lib/dispatch";
-import { notifyCustomerStatus } from "@/lib/notify/customer";
+import { notifyCustomerStatus, notifyOrderPlaced } from "@/lib/notify/customer";
 
 const orderInclude = {
   items: true,
@@ -229,7 +229,7 @@ export async function createOrder(input: {
   deliveryAddress?: string;
   tableNumber?: string;
   couponCode?: string;
-  paymentGateway?: "RAZORPAY" | "CASHFREE" | "STRIPE" | "UPI" | "CASH";
+  paymentGateway?: "RAZORPAY" | "CASHFREE" | "STRIPE" | "UPI" | "CASH" | "CARD";
   paymentStatus?: "PAID" | "CASH_ON_DELIVERY" | "PENDING";
   lines: IncomingLine[];
   marketplace?: boolean;
@@ -375,7 +375,7 @@ export async function createOrder(input: {
           create: {
             restaurantId: input.restaurantId,
             gateway: input.paymentGateway ?? (input.channel === "DINE_IN" ? "UPI" : "RAZORPAY"),
-            status: input.paymentStatus ?? "PAID",
+            status: input.paymentStatus ?? "PENDING",
             amountPaise: money.totalPaise,
             reference: input.paymentStatus === "CASH_ON_DELIVERY" ? null : `pay_${Date.now()}`,
             settled: input.paymentStatus === "PAID",
@@ -388,7 +388,32 @@ export async function createOrder(input: {
 
   publishTenantEvent(input.restaurantId, { type: "order.created", payload: order });
   if (table) publishTenantEvent(input.restaurantId, { type: "table.updated" });
+  void notifyOrderPlaced(order);
   return order;
+}
+
+export async function collectPayment(
+  restaurantId: string,
+  orderId: string,
+  gateway: "CASH" | "CARD" | "UPI",
+) {
+  const existing = await prisma.order.findFirst({
+    where: { id: orderId, restaurantId },
+    include: { payment: true },
+  });
+  if (!existing?.payment) return null;
+  await prisma.payment.update({
+    where: { id: existing.payment.id },
+    data: {
+      status: "PAID",
+      settled: true,
+      gateway,
+      reference: existing.payment.reference ?? `pos_${Date.now()}`,
+    },
+  });
+  const updated = await getOrder(restaurantId, orderId);
+  if (updated) publishTenantEvent(restaurantId, { type: "order.updated", payload: updated });
+  return updated;
 }
 
 export async function printBill(restaurantId: string, orderId: string) {
