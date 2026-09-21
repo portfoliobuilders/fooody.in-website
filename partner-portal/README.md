@@ -2,7 +2,7 @@
 
 Multi-tenant restaurant OS for **fooody.in**: partner POS/KDS + branded storefront (`fooody.in/[slug]` or `[slug].fooody.in`) + QR dine-in + WhatsApp commerce + hybrid dispatch.
 
-Repo-wide architecture (marketing site + this OS, real vs mock, data model): [`../docs/FOOODY-COMPLETE-ARCHITECTURE.md`](../docs/FOOODY-COMPLETE-ARCHITECTURE.md).
+Repo-wide briefing (marketing site + this OS): [`../FOOODY-COMPLETE-ARCHITECTURE.md`](../FOOODY-COMPLETE-ARCHITECTURE.md) and [`../FOOODY-REVAMP-MASTER-PLAN.md`](../FOOODY-REVAMP-MASTER-PLAN.md).
 
 ## Run locally
 
