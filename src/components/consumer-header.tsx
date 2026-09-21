@@ -8,11 +8,13 @@ import { Logo } from "@/components/logo";
 import { useLocation } from "@/components/location-context";
 import { useMenuFilter } from "@/components/menu-filter-context";
 import {
+  DISHES,
   LOCATIONS,
   SEARCH_SUGGESTIONS,
   searchCatalog,
   type CategoryId,
 } from "@/lib/catalog";
+import { findBaketreeDish } from "@/lib/baketree";
 
 export function ConsumerHeader() {
   const { location, locationId, setLocationId } = useLocation();
@@ -154,10 +156,14 @@ export function ConsumerHeader() {
                 document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
               }}
               onDish={(id) => {
-                setCategory("all");
-                setDraft("");
-                setQuery("");
                 setSearchOpen(false);
+                setDraft("");
+                if (!DISHES.some((dish) => dish.id === id) && findBaketreeDish(id)) {
+                  window.location.assign(`/baketree/#dish-${id}`);
+                  return;
+                }
+                setCategory("all");
+                setQuery("");
                 focusDish(id);
               }}
               onHint={applySearch}

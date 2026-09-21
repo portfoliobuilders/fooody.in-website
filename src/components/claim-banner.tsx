@@ -2,16 +2,20 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Check, CircleAlert } from "lucide-react";
 import { useClaim } from "@/components/claim-context";
-import { slugify, slugStatus } from "@/lib/claim";
+import { LIVE_STORES, slugify, slugStatus } from "@/lib/claim";
 
 export function ClaimBanner() {
   const { openClaim } = useClaim();
+  const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
   const slug = useMemo(() => slugify(value), [value]);
   const status = slugStatus(slug);
+  const liveHref = LIVE_STORES[slug];
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -29,6 +33,10 @@ export function ClaimBanner() {
       return;
     }
     if (status === "taken") {
+      if (liveHref) {
+        router.push(liveHref);
+        return;
+      }
       setError(`fooody.in/${slug} is taken. Try ${slug}-kochi`);
       return;
     }
@@ -72,7 +80,15 @@ export function ClaimBanner() {
               </button>
             </div>
             <p className="mt-3 flex min-h-6 items-center gap-2 text-sm">
-              {status === "available" ? (
+              {liveHref ? (
+                <span className="inline-flex items-center gap-1.5 font-medium text-emerald-300">
+                  <Check size={15} />
+                  fooody.in/{slug} is live —{" "}
+                  <Link href={liveHref} className="underline underline-offset-2">
+                    open the store
+                  </Link>
+                </span>
+              ) : status === "available" ? (
                 <span className="inline-flex items-center gap-1.5 font-medium text-emerald-300">
                   <Check size={15} />
                   fooody.in/{slug} is available

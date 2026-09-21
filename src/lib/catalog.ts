@@ -1,3 +1,5 @@
+import { BAKETREE_DISHES, BAKETREE_FEATURED } from "@/lib/baketree";
+
 export const LOCATIONS = [
   {
     id: "kochi",
@@ -78,6 +80,7 @@ export type Dish = {
   freeDelivery: boolean;
   image: string;
   badge?: string;
+  storeHref?: string;
 };
 
 export const CATEGORIES: {
@@ -134,93 +137,7 @@ export const FILTERS: { id: FilterId; label: string }[] = [
 ];
 
 export const DISHES: Dish[] = [
-  {
-    id: "baketree-zinger",
-    name: "Zinger Chicken Sandwich",
-    restaurant: "BakeTree Resto Cafe",
-    cuisine: "Cafe",
-    category: "burgers",
-    price: 120,
-    aggregatorPrice: 160,
-    rating: 4.1,
-    etaMin: 18,
-    etaMax: 24,
-    distanceKm: 3.2,
-    veg: false,
-    keralaClassic: false,
-    freeDelivery: true,
-    image: "/images/menu/burger.jpg",
-    badge: "Live kitchen",
-  },
-  {
-    id: "baketree-alfaham",
-    name: "Al Faham (Full)",
-    restaurant: "BakeTree Resto Cafe",
-    cuisine: "Arabian",
-    category: "grills",
-    price: 420,
-    aggregatorPrice: 520,
-    rating: 4.1,
-    etaMin: 28,
-    etaMax: 36,
-    distanceKm: 3.2,
-    veg: false,
-    keralaClassic: false,
-    freeDelivery: false,
-    image: "/images/menu/shawarma.jpg",
-  },
-  {
-    id: "baketree-shawarma",
-    name: "Plate Shawarma",
-    restaurant: "BakeTree Resto Cafe",
-    cuisine: "Arabian",
-    category: "grills",
-    price: 110,
-    aggregatorPrice: 149,
-    rating: 4.2,
-    etaMin: 16,
-    etaMax: 22,
-    distanceKm: 3.2,
-    veg: false,
-    keralaClassic: false,
-    freeDelivery: true,
-    image: "/images/menu/shawarma.jpg",
-    badge: "Direct price",
-  },
-  {
-    id: "baketree-snacksbox",
-    name: "Snacks Box",
-    restaurant: "BakeTree Resto Cafe",
-    cuisine: "Cafe",
-    category: "burgers",
-    price: 199,
-    aggregatorPrice: 259,
-    rating: 4.0,
-    etaMin: 20,
-    etaMax: 26,
-    distanceKm: 3.2,
-    veg: false,
-    keralaClassic: false,
-    freeDelivery: true,
-    image: "/images/menu/burger.jpg",
-  },
-  {
-    id: "baketree-karikku",
-    name: "Karikku Shake",
-    restaurant: "BakeTree Resto Cafe",
-    cuisine: "Shakes",
-    category: "coffee-dessert",
-    price: 70,
-    aggregatorPrice: 95,
-    rating: 4.3,
-    etaMin: 12,
-    etaMax: 18,
-    distanceKm: 3.2,
-    veg: true,
-    keralaClassic: true,
-    freeDelivery: true,
-    image: "/images/menu/coffee.jpg",
-  },
+  ...BAKETREE_FEATURED,
   {
     id: "thalassery-biryani",
     name: "Thalassery Chicken Biryani",
@@ -505,15 +422,19 @@ export const PACKAGING_MARKUP_PER_ITEM = 12;
 export const SEARCH_SUGGESTIONS = [
   "biryani",
   "burgers",
-  "cafes",
+  "shawarma",
+  "al faham",
   "porotta",
-  "mandhi",
-  "chai",
+  "baketree",
   "meals",
 ] as const;
 
 export function getLocation(id: string) {
   return LOCATIONS.find((item) => item.id === id) ?? LOCATIONS[0];
+}
+
+export function findDish(id: string) {
+  return DISHES.find((item) => item.id === id) ?? BAKETREE_DISHES.find((item) => item.id === id);
 }
 
 export function searchCatalog(query: string) {
@@ -531,17 +452,23 @@ export function searchCatalog(query: string) {
     subtitle: category.label,
   }));
 
-  const dishHits = DISHES.filter(
-    (dish) =>
-      dish.name.toLowerCase().includes(q) ||
-      dish.restaurant.toLowerCase().includes(q) ||
-      dish.cuisine.toLowerCase().includes(q),
-  ).map((dish) => ({
-    type: "dish" as const,
-    id: dish.id,
-    title: dish.name,
-    subtitle: dish.restaurant,
-  }));
+  const seen = new Set<string>();
+  const dishHits = [...DISHES, ...BAKETREE_DISHES]
+    .filter((dish) => {
+      if (seen.has(dish.id)) return false;
+      seen.add(dish.id);
+      return (
+        dish.name.toLowerCase().includes(q) ||
+        dish.restaurant.toLowerCase().includes(q) ||
+        dish.cuisine.toLowerCase().includes(q)
+      );
+    })
+    .map((dish) => ({
+      type: "dish" as const,
+      id: dish.id,
+      title: dish.name,
+      subtitle: dish.restaurant,
+    }));
 
   return [...categoryHits, ...dishHits].slice(0, 8);
 }

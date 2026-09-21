@@ -28,6 +28,10 @@ export const TAKEN_SLUGS = new Set([
   "zomato",
 ]);
 
+export const LIVE_STORES: Record<string, string> = {
+  baketree: "/baketree/",
+};
+
 export type SlugStatus =
   | "empty"
   | "short"
