@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import {
-  DISHES,
+  findDish,
   PACKAGING_MARKUP_PER_ITEM,
   PLATFORM_FEE_PER_ITEM,
   type Dish,
@@ -131,7 +131,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => {
     const lines = Object.entries(qtyById)
       .map(([id, qty]) => {
-        const dish = DISHES.find((item) => item.id === id);
+        const dish = findDish(id);
         if (!dish || qty < 1) return null;
         return { dish, qty };
       })

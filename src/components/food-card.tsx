@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Clock3, Star } from "lucide-react";
 import type { Dish } from "@/lib/catalog";
 import { QtyControl } from "@/components/qty-control";
@@ -37,7 +38,16 @@ export function FoodCard({ dish, highlight = false }: { dish: Dish; highlight?: 
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-slate-500">{dish.restaurant}</p>
+            {dish.storeHref ? (
+              <Link
+                href={dish.storeHref}
+                className="truncate text-sm font-semibold text-slate-500 hover:text-rose-600"
+              >
+                {dish.restaurant}
+              </Link>
+            ) : (
+              <p className="truncate text-sm font-semibold text-slate-500">{dish.restaurant}</p>
+            )}
             <h3 className="font-display mt-0.5 text-lg leading-snug font-bold text-slate-900">
               {dish.name}
             </h3>

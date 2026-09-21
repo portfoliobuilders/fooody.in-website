@@ -1,3 +1,4 @@
+import { BaketreeSpotlight } from "@/components/baketree-spotlight";
 import { CategoryRail } from "@/components/category-rail";
 import { ClaimBanner } from "@/components/claim-banner";
 import { ConsumerHeader } from "@/components/consumer-header";
@@ -21,6 +22,7 @@ export default function Home() {
         </h1>
         <ClaimBanner />
         <PromiseCards />
+        <BaketreeSpotlight />
         <CategoryRail />
         <MenuGrid />
         <StoryTeaser />

@@ -7,6 +7,7 @@ import { KERALA_CITIES, SITE } from "@/lib/site";
 
 const PRODUCT_LINKS = [
   { href: "/", label: "Order food" },
+  { href: "/baketree/", label: "BakeTree menu" },
   { href: "/our-story/", label: "Our Story" },
   { href: "/for-restaurants/", label: "For Restaurants" },
   { href: "/for-restaurants/#features", label: "Platform" },

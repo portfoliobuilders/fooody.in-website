@@ -23,6 +23,7 @@ export const SITE = {
 
 export const NAV_LINKS = [
   { href: "/", label: "Order food" },
+  { href: "/baketree/", label: "BakeTree" },
   { href: "/our-story/", label: "Our Story" },
   { href: "/for-restaurants/", label: "For Restaurants" },
   { href: "/for-restaurants/#features", label: "Platform" },

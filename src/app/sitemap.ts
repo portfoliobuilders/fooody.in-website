@@ -5,6 +5,7 @@ export const dynamic = "force-static";
 
 const PATHS = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
+  { path: "/baketree/", changeFrequency: "weekly" as const, priority: 0.9 },
   { path: "/our-story/", changeFrequency: "monthly" as const, priority: 0.7 },
   {
     path: "/for-restaurants/",

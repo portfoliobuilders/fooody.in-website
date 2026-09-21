@@ -14,6 +14,7 @@ This project uses **Next.js** so search engines get real HTML (titles, headings,
 ## Pages
 
 - `/` — Kochi ordering UI: location, search, categories, dish grid, cart, and “claim fooody.in/your-brand”
+- `/baketree/` — BakeTree Resto Cafe direct store (live kitchen menu from Palarivattom)
 - `/our-story/` — 2016 founder chronicle, office / bot / merch gallery
 - `/for-restaurants/` — QR dining, CRM, POS, fleets, savings calculator, waitlist
 - `/terms/` and `/privacy/`
