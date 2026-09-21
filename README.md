@@ -2,6 +2,8 @@
 
 Consumer food-ordering homepage plus restaurant **claim-your-URL** engine for **Fooody.in** — Kerala’s original food-tech pioneer (2016), returning in 2026 with **₹0 platform fee** for guests and **0% commission** direct stores for kitchens.
 
+**Full architecture and inventory (for a revamp):** [`docs/FOOODY-COMPLETE-ARCHITECTURE.md`](./docs/FOOODY-COMPLETE-ARCHITECTURE.md) — what is built, what is mocked, data model, APIs, and how the two apps relate.
+
 This repository has two Next.js apps:
 
 | App | Folder | What it is |
